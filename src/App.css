@@ -1,0 +1,369 @@
+.heading{
+  color: white;
+  font-weight: bold;
+  margin-top: 40px;
+}
+
+.login{
+  margin-top: 100px;
+}
+
+.title-name{
+  padding: 5px;
+  color: black;
+  font-weight: bold;
+  font-size: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.title-time{
+  padding: 5px;
+  color: black;
+  font-size: 12px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.username, .password{
+  padding: 10px;
+  border: none;
+  color: white;
+  font-weight:550;
+  background-color: transparent;
+  border-bottom: 2px solid white;
+  width: 90%;
+  max-width: 300px; 
+  margin: 0 auto;
+}
+
+.username:focus, .password:focus{
+  outline: none;
+  background-color: white;
+  border-radius: 5px;
+  color: black;
+}
+
+.button{
+  margin-top: 30px;
+  background-color: white;
+  border: none;
+  font-weight: bold;
+  padding:5px 15px 5px  15px ;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover{
+  background-color: black;
+  color: white;
+}
+
+.home{
+  color: white;
+  margin-top: 80px;
+}
+.top{
+  margin: auto;
+  color: white;
+  width:1000px;
+  max-width: 90%;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.homeIcon,.addIcon,.editIcon{
+  color: white;
+  cursor: pointer;
+}
+
+.title-input{
+  color: white;
+  background-color: black;
+  font-weight: bold;
+  width:700px;
+  max-width: 90%;
+}
+
+.title-input:focus{
+  background-color: white;
+  color: black;
+  outline: none;
+}
+
+.notes{
+  margin: auto;
+  max-width: 1000px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.note{
+  position: relative;
+  background-color: white;
+  margin: 10px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.note:hover .title-time{
+  color: white;
+}
+
+.note:hover .title-name{
+  color: white;
+}
+
+.add{
+  border: 2px dashed white;
+  margin: 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add:hover{
+  border: 2px solid white;
+}
+
+.title-page{
+  margin: auto;
+  width:1000px;
+  max-width: 90%;
+}
+
+.new-note,.edit-title{
+  color: white;
+  background-color: black;
+  border: 2px solid white;
+  padding: 7px;
+  border-radius: 10px;
+  height: 100px;
+  width: 700px;
+  max-width: 90%;
+}
+
+.new-note:focus,.edit-title:focus{
+  background-color: white;
+  color: black;
+  outline: none;
+}
+
+.total-note{
+  margin-top: 10px;
+}
+
+.title-page-note{
+  display: inline-block;
+  padding: 10px;
+  background-color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.createdTime{
+  display: inline-block;
+}
+
+.no-notes{
+  margin-top: 50px;
+}
+
+.edit-note{
+  resize: vertical;
+  color: white;
+  background-color: black;
+  border: 2px solid white;
+  border-radius: 10px;
+}
+
+.edit-note:focus{
+  background-color: white;
+  color: black;
+  outline: none;
+}
+
+.title-exists{
+  color: red;
+  margin: 10px;
+}
+
+/* Styles for desktop devices */
+@media (min-width: 768px) {
+  .heading{
+    font-size: 50px;
+  }
+  .note {
+    height: 100px;
+    width: 200px;
+  }
+  .note:hover{
+    height: 95px;
+    background-color: black;
+    border-bottom: 5px solid white;
+  }
+  .add{
+    height: 100px;
+    width: 200px;
+  }
+  .username, .password{
+    font-size: 20px;
+  }
+  .button{
+    font-size: 25px;
+  }
+  .title-input{
+    border: 2px solid white;
+    padding: 10px;
+    font-size: 30px;
+    border-radius: 10px;
+  }
+  .title{
+    font-size: 50px;
+    font-weight: bold;
+  }
+  .homeIcon,.addIcon{
+    font-size: 40px;
+  }
+  .old-notes{
+    font-size: 30px;
+  }
+  .note-text{
+    font-size: 20px;
+    color: black;
+  }
+  .timestamp{
+    font-size: 15px;
+    color: white;
+  }
+  .new-note,.edit-note{
+    font-size: 20px;
+  }
+  .edit-title{
+    font-size: 25px;
+    font-weight: bold;
+  }
+  .editIcon{
+    font-size: 25px;
+  }
+  .createdTime{
+    font-size: 15px;
+  }
+  .no-notes{
+    font-size: 20px;
+  }
+  .title-page-note{
+    margin: 10px 0px 30px 20px;
+  }
+  .deleteNote{
+    margin: 10px;
+    margin-bottom: 20px;
+    font-size: 35px;
+    cursor: pointer;
+  }
+  .edit-note{
+    padding: 10px;
+    border-radius: 10px;
+    height: 100px;
+    width: 700px;
+    max-width: 80%;
+  }
+}
+
+/* Styles for mobile devices */
+@media (max-width: 767px) {
+  .heading{
+    font-size: 40px;
+  }
+  .note {
+    height: 75px;
+    width: 150px;
+  }
+  .add{
+    height: 75px;
+    width: 150px;
+  }
+  .note:hover{
+    height: 72px;
+    background-color: black;
+    border-bottom: 3px solid white;
+  }
+  .username, .password{
+    font-size: 15px;
+  }
+  .button{
+    font-size: 20px;
+  }
+  .title-input{
+    border: 2px solid white;
+    padding: 5px;
+    font-size: 20px;
+    border-radius: 5px;
+  }
+  .title{
+    font-size: 35px;
+    font-weight: bold;
+  }
+  .homeIcon,.addIcon{
+    font-size: 30px;
+  }
+  .old-notes{
+    font-size: 20px;
+  }
+  .note-text{
+    font-size: 15px;
+    color: black;
+  }
+  .timestamp{
+    font-size: 12px;
+    color: white;
+  }
+  .new-note{
+    font-size: 15px;
+  }
+  .edit-title{
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .editIcon{
+    font-size: 18px;
+  }
+  .createdTime{
+    font-size: 10px;
+  }
+  .title-page-note{
+    margin: 10px 0px 20px 10px;
+  }
+  .edit-note{
+    padding: 5px;
+    border-radius: 10px;
+    height: 100px;
+    width: 700px;
+    max-width: 80%;
+  }
+  .deleteNote{
+    margin-bottom: 15px;
+    margin-left: 5px;
+    font-size: 25px;
+    cursor: pointer;
+  }
+  .home{
+    margin-top: 40px;
+  }
+  .title-name{
+    font-size: 15px;
+  }
+  
+  .title-time{
+    font-size: 8px;
+  }
+  .title-exists{
+    font-size: 10px;
+  }
+}
