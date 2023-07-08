@@ -18,8 +18,6 @@ function App() {
 
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(db, username, "all_titles"), (doc) => {
-      console.log(doc);
-      console.log(doc.data()?.titles);
       setTitles(doc.data()?.titles);
       setTimestamps(doc.data()?.timestamps);
     });

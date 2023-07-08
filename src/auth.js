@@ -32,7 +32,6 @@ const checkUser = async (username, password) => {
 
 const getTitles = async (username) => {
   const res = await getDoc(doc(db, username, "all_titles"));
-  console.log(res);
   return res.data();
 };
 
@@ -74,7 +73,7 @@ const addTitle = async (username, title) => {
     });
     return result;
   } catch (error) {
-    console.error("Error adding note:", error);
+    console.error("Error adding note");
   }
 };
 
@@ -107,7 +106,7 @@ const addNote = async (username, title, note) => {
     });
     return result;
   } catch (error) {
-    console.error("Error adding note:", error);
+    console.error("Error adding note");
   }
 };
 
@@ -133,7 +132,7 @@ const deleteTitle = async (username, title, timestamp) => {
     });
     return result;
   } catch (error) {
-    console.error("Error adding note:", error);
+    console.error("Error adding note");
   }
 };
 
@@ -146,12 +145,9 @@ const deleteNote = async (username, title, note, timestamp) => {
     },
     { merge: true }
   );
-  console.log(res);
 };
 
 const updateTitle = async (username, oldTitle, newTitle, oldTimestamp) => {
-  const newTimestamp = getTimestamp();
-  const data = await getDoc(doc(db, username, oldTitle));
   var res = await getTitles(username);
   var isExistOld = false;
   var isExistNew = false;
@@ -170,8 +166,10 @@ const updateTitle = async (username, oldTitle, newTitle, oldTimestamp) => {
   if (isExistNew === true) {
     return "AE";
   }
-  deleteTitle(username, oldTitle, oldTimestamp);
-  addTitle(username, newTitle, newTimestamp);
+  const newTimestamp = getTimestamp();
+  const data = await getDoc(doc(db, username, oldTitle));
+  const res1 = await deleteTitle(username, oldTitle, oldTimestamp);
+  const res2 = await addTitle(username, newTitle, newTimestamp);
   setDoc(doc(db, username, newTitle), data.data(), { merge: true });
   return newTimestamp;
 };
