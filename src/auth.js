@@ -9,10 +9,8 @@ import {
   arrayUnion,
   arrayRemove,
   onSnapshot,
-  runTransaction,
 } from "firebase/firestore";
 import { config } from "./config";
-import { getTimestamp } from "./get-timestamp";
 
 const firebaseConfig = config;
 
@@ -45,95 +43,40 @@ const getTitleData = async (username, title) => {
   return res.data();
 };
 
-const addTitle = async (username, title) => {
-  try {
-    const result = await runTransaction(db, async (transaction) => {
-      const timestamp = getTimestamp();
-      const docRef1 = doc(db, username, title);
-      const docRef2 = doc(db, username, "all_titles");
-      const docSnapshot = await transaction.get(docRef1);
-
-      if (docSnapshot.exists()) {
-        const docData = docSnapshot.data();
-        if (docData.titles?.includes(title)) {
-          return "AE";
-        }
-      }
-
-      transaction.set(docRef1, {});
-      transaction.set(
-        docRef2,
-        {
-          titles: arrayUnion(title),
-          timestamps: arrayUnion(timestamp),
-        },
-        { merge: true }
-      );
-      return timestamp;
-    });
-    return result;
-  } catch (error) {
-    console.error("Error adding note");
-  }
+const addTitle = async (username, title, timestamp) => {
+  const res = await setDoc(doc(db, username, title), {}).then(() => {
+    setDoc(
+      doc(db, username, "all_titles"),
+      {
+        titles: arrayUnion(title),
+        timestamps: arrayUnion(timestamp),
+      },
+      { merge: true }
+    );
+  });
 };
 
-const addNote = async (username, title, note) => {
-  try {
-    const result = await runTransaction(db, async (transaction) => {
-      const timestamp = getTimestamp();
-      const docRef = doc(db, username, title);
-      const docSnapshot = await transaction.get(docRef);
-
-      if (docSnapshot.exists()) {
-        const docData = docSnapshot.data();
-
-        if (docData.notes?.includes(note)) {
-          return "AE";
-        }
-        transaction.set(
-          docRef,
-          {
-            notes: arrayUnion(note),
-            timestamps: arrayUnion(timestamp),
-          },
-          { merge: true }
-        );
-
-        return "Success";
-      } else {
-        return "AD";
-      }
-    });
-    return result;
-  } catch (error) {
-    console.error("Error adding note");
-  }
+const addNote = async (username, title, note, timestamp) => {
+  const res = await setDoc(
+    doc(db, username, title),
+    {
+      notes: arrayUnion(note),
+      timestamps: arrayUnion(timestamp),
+    },
+    { merge: true }
+  );
 };
 
 const deleteTitle = async (username, title, timestamp) => {
-  try {
-    const result = await runTransaction(db, async (transaction) => {
-      const docRef1 = doc(db, username, title);
-      const docRef2 = doc(db, username, "all_titles");
-      const docSnapshot = await transaction.get(docRef1);
-      if (!docSnapshot.exists()) {
-        return "AD";
-      }
-      transaction.delete(docRef1);
-      transaction.set(
-        docRef2,
-        {
-          titles: arrayRemove(title),
-          timestamps: arrayRemove(timestamp),
-        },
-        { merge: true }
-      );
-      return "success";
-    });
-    return result;
-  } catch (error) {
-    console.error("Error adding note");
-  }
+  const res = await deleteDoc(doc(db, username, title));
+  setDoc(
+    doc(db, username, "all_titles"),
+    {
+      titles: arrayRemove(title),
+      timestamps: arrayRemove(timestamp),
+    },
+    { merge: true }
+  );
 };
 
 const deleteNote = async (username, title, note, timestamp) => {
@@ -147,35 +90,27 @@ const deleteNote = async (username, title, note, timestamp) => {
   );
 };
 
-const updateTitle = async (username, oldTitle, newTitle, oldTimestamp) => {
-  var res = await getTitles(username);
-  var isExistOld = false;
-  var isExistNew = false;
-  for (var i = 0; i < res?.titles?.length; i++) {
-    if (res.titles[i] === oldTitle) {
-      isExistOld = true;
-    }
-    if (res.titles[i] === newTitle) {
-      isExistNew = true;
-    }
-  }
-
-  if (isExistOld === false) {
-    return "AD";
-  }
-  if (isExistNew === true) {
-    return "AE";
-  }
-  const newTimestamp = getTimestamp();
+const updateTitle = async (
+  username,
+  oldTitle,
+  newTitle,
+  oldTimestamp,
+  newTimestamp
+) => {
   const data = await getDoc(doc(db, username, oldTitle));
-  const res1 = await deleteTitle(username, oldTitle, oldTimestamp);
-  const res2 = await addTitle(username, newTitle, newTimestamp);
+  deleteTitle(username, oldTitle, oldTimestamp);
+  addTitle(username, newTitle, newTimestamp);
   setDoc(doc(db, username, newTitle), data.data(), { merge: true });
-  return newTimestamp;
 };
 
-const updateNote = (username, title, oldNote, oldTimestamp, newNote) => {
-  const newTimestamp = getTimestamp();
+const updateNote = (
+  username,
+  title,
+  oldNote,
+  oldTimestamp,
+  newNote,
+  newTimestamp
+) => {
   deleteNote(username, title, oldNote, oldTimestamp);
   addNote(username, title, newNote, newTimestamp);
 };

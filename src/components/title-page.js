@@ -1,9 +1,8 @@
+import { async } from "@firebase/util";
 import React, { useState, useRef, useEffect } from "react";
 import { FaHome } from "react-icons/fa";
 import { FaPen } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
-
-// import { getTimestamp } from "../get-timestamp";
 
 import {
   addNote,
@@ -14,6 +13,7 @@ import {
   onSnapshot,
   doc,
   db,
+  getTitles,
 } from "../auth";
 
 function TitlePage({
@@ -40,6 +40,14 @@ function TitlePage({
   const titleRef = useRef("");
   const noteRef = useRef("");
 
+  const checkTitle = async (username, title) => {
+    const res = await getTitles(username);
+    if (res.titles?.includes(title)) {
+      return true;
+    }
+    return false;
+  };
+
   useEffect(() => {
     const unsubscribe = onSnapshot(doc(db, username, title), (doc) => {
       const data = doc.data();
@@ -65,39 +73,43 @@ function TitlePage({
   const [error, setError] = useState("load");
 
   const handleUpdate = async () => {
+    const check = await checkTitle(username, title);
+    if (!check) {
+      setError("no page");
+      return;
+    }
     var newTitle = titleRef.current.value;
     newTitle = newTitle.trim().replace(/\s+/g, " ");
+    if (titles?.includes(newTitle)) {
+      setError("exists");
+      return;
+    }
     if (newTitle !== "") {
-      const res = await updateTitle(username, title, newTitle, createdTime);
-      if (res === "AE") {
-        setError("title exists");
-        return;
-      }
-      if (res === "AD") {
-        setError("no page");
-        return;
-      }
-      setTitle(newTitle);
-      setCreatedTime(res);
+      const time = getTimestamp();
+      updateTitle(username, title, newTitle, createdTime, time);
       setChange(!change);
+      setTitle(newTitle);
+      setCreatedTime(time);
     }
     setError("");
     setEditTitle(false);
   };
 
   const createNote = async () => {
+    const check = await checkTitle(username, title);
+    if (!check) {
+      setError("no page");
+      return;
+    }
     var note = noteRef.current.value;
     note = note.trim().replace(/\s+/g, " ");
+    if (notes?.includes(note)) {
+      setError("note exists");
+      return;
+    }
     if (note !== "") {
-      const res = await addNote(username, title, note);
-      if (res === "AE") {
-        setError("note exists");
-        return;
-      }
-      if (res === "AD") {
-        setError("no page");
-        return;
-      }
+      const time = getTimestamp();
+      addNote(username, title, note, time);
       setChangeNotes(!changeNotes);
     }
     setError("");
@@ -105,13 +117,15 @@ function TitlePage({
   };
 
   const handleDelete = async () => {
-    const res = await deleteTitle(username, title, createdTime);
-    if (res === "AD") {
+    const check = await checkTitle(username, title);
+    if (!check) {
       setError("no page");
       return;
     }
-    setChange(!change);
-    setPage("home");
+    deleteTitle(username, title, createdTime).then(() => {
+      setChange(!change);
+      setPage("home");
+    });
     return;
   };
 
@@ -139,7 +153,7 @@ function TitlePage({
               ref={titleRef}
               className="edit-title"
               placeholder={title}
-              onClick={createNote}
+              defaultValue={title}
               required
             ></textarea>
             <div style={{ margin: "-20px" }}></div>
@@ -156,7 +170,7 @@ function TitlePage({
               className="button"
               onClick={handleCancel}
             />
-            {error === "title exists" ? (
+            {error === "exists" ? (
               <span className="title-exists" align="center">
                 Title already exists
               </span>
@@ -193,11 +207,6 @@ function TitlePage({
         ) : (
           ""
         )}
-        {error === "try again" ? (
-          <span className="title-exists" align="center"></span>
-        ) : (
-          ""
-        )}
         <br></br>
         <br></br>
         <span className="old-notes">Old notes :</span>
@@ -210,7 +219,6 @@ function TitlePage({
             note={notes[notes.length - index - 1]}
             timestamp={timestamps[notes.length - index - 1]}
             notes={notes}
-            timestamps={timestamps}
             changeNotes={changeNotes}
             setChangeNotes={setChangeNotes}
           />
@@ -227,7 +235,6 @@ function Note({
   note,
   timestamp,
   notes,
-  timestamps,
   changeNotes,
   setChangeNotes,
 }) {
@@ -242,7 +249,6 @@ function Note({
   const handleCancel = () => {
     setError(false);
     setEditNote(false);
-    return;
   };
 
   const _deleteNote = () => {
@@ -259,9 +265,10 @@ function Note({
       setError(true);
       return;
     }
+    const newTime = getTimestamp();
     if (newNote !== "") {
-      updateNote(username, title, note, timestamp, newNote);
       setChangeNotes(!changeNotes);
+      updateNote(username, title, note, timestamp, newNote, newTime);
     }
     setEditNote(false);
     return;
@@ -280,6 +287,7 @@ function Note({
             className="edit-note"
             placeholder={note}
             onClick={handleClick}
+            defaultValue={note}
           ></textarea>
           <FaTrash className="deleteNote" onClick={_deleteNote} />
           <div style={{ margin: "-20px" }}></div>
@@ -318,6 +326,39 @@ function Note({
       )}
     </>
   );
+}
+
+function getTimestamp() {
+  const currentDate = new Date();
+
+  const options = { hour: "numeric", minute: "numeric", second: "numeric" };
+  const currentTime = currentDate.toLocaleString("en-US", options);
+
+  const day = currentDate.getDate();
+  const month = currentDate.toLocaleString("en-US", { month: "long" });
+  const year = currentDate.getFullYear();
+  const ordinalSuffix = getOrdinalSuffix(day);
+
+  const formattedDateString = day + ordinalSuffix + " " + month + " " + year;
+
+  return currentTime + ", " + formattedDateString;
+}
+
+function getOrdinalSuffix(day) {
+  if (day >= 11 && day <= 13) {
+    return "th";
+  }
+
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
 }
 
 export default TitlePage;

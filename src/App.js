@@ -49,7 +49,6 @@ function App() {
         setCreatedTime={setCreatedTime}
         titles={titles}
         setTitles={setTitles}
-        timestamps={timestamps}
         change={change}
         setChange={setChange}
       />

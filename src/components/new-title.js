@@ -2,14 +2,11 @@ import React, { useRef, useState } from "react";
 import { FaHome } from "react-icons/fa";
 import { addTitle } from "../auth";
 
-// import { getTimestamp } from "../get-timestamp";
-
 function NewTitle({
   username,
   setPage,
   setTitle,
   titles,
-  timestamps,
   setCreatedTime,
   change,
   setChange,
@@ -24,17 +21,17 @@ function NewTitle({
   const handleSubmit = async (event) => {
     setError("load");
     event.preventDefault();
-    var title = titleRef.current.value;
-    title = title.trim().replace(/\s+/g, " ");
-    const res = await addTitle(username, title);
-    if (res === "AE") {
+    const title = titleRef.current.value;
+    if (titles?.includes(title)) {
       setError("exists");
       return;
     }
+    const time = getTimestamp();
+    addTitle(username, title, time);
     setTitle(title);
     setChange(!change);
     setPage("titlePage");
-    setCreatedTime(res);
+    setCreatedTime(time);
     return;
   };
 
@@ -69,6 +66,39 @@ function NewTitle({
       </div>
     </div>
   );
+}
+
+function getTimestamp() {
+  const currentDate = new Date();
+
+  const options = { hour: "numeric", minute: "numeric", second: "numeric" };
+  const currentTime = currentDate.toLocaleString("en-US", options);
+
+  const day = currentDate.getDate();
+  const month = currentDate.toLocaleString("en-US", { month: "long" });
+  const year = currentDate.getFullYear();
+  const ordinalSuffix = getOrdinalSuffix(day);
+
+  const formattedDateString = day + ordinalSuffix + " " + month + " " + year;
+
+  return currentTime + ", " + formattedDateString;
+}
+
+function getOrdinalSuffix(day) {
+  if (day >= 11 && day <= 13) {
+    return "th";
+  }
+
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
 }
 
 export default NewTitle;
