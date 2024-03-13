@@ -1,53 +1,28 @@
-import React, { useRef, useState } from "react";
-import { checkUser } from "../auth";
+import { useNavigate } from "react-router-dom";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import google from "../google_black.png";
+import { useState } from "react";
 
-function Login({ setPage, setUsername }) {
-  const usernameRef = useRef(null);
-  const passwordRef = useRef(null);
-  const [error, setError] = useState();
+function Login() {
 
-  const verifyUser = (event) => {
-    event.preventDefault();
-    const username = usernameRef.current.value;
-    const password = passwordRef.current.value;
-    checkUser(username, password).then((res) => {
-      if (res === "user not found" || res === "incorrect password") {
-        setError(res);
-        return;
-      }
-      setUsername(username);
-      setPage("home");
-      return;
-    });
-  };
+  const navigate=useNavigate();
+  const [error,setError]=useState("")
+
+  function GoogleSignIn(){
+    signInWithPopup(getAuth(), new GoogleAuthProvider()).then((result) => {
+      navigate("/home")
+    })
+    .catch((error) => {
+      setError("Something went wrong. Try again.")
+    })
+  }
 
   return (
     <>
-      <form onSubmit={verifyUser}>
-        <div align="center" className="login">
-          <input
-            ref={usernameRef}
-            type="text"
-            placeholder="username"
-            className="username"
-            required
-          />
-          <br />
-          <br />
-          <input
-            ref={passwordRef}
-            type="password"
-            placeholder="password"
-            className="password"
-            required
-          />
-          <br />
-          <input type="submit" value="Login" className="button" />
-        </div>
-      </form>
-      <br></br>
-      <div style={{ color: "red" }} align="center">
-        {error}
+      <div className="login">
+        Sign in with
+        <img src={google} className="google" onClick={GoogleSignIn}/>
+        <div>{error}</div>
       </div>
     </>
   );

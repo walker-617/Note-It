@@ -5,7 +5,14 @@
 }
 
 .login{
-  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+  gap: 20px;
+  font-size: 20px;
+  margin: 100px;
 }
 
 .title-name{
@@ -27,16 +34,12 @@
   right: 0;
 }
 
-.username, .password{
-  padding: 10px;
+.google{
+  padding: 20px;
   border: none;
-  color: white;
-  font-weight:550;
-  background-color: transparent;
-  border-bottom: 2px solid white;
-  width: 90%;
-  max-width: 300px; 
-  margin: 0 auto;
+  background-color: white;
+  border-radius: 10px;
+  width: 100px;
 }
 
 .username:focus, .password:focus{

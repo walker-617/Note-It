@@ -1,32 +1,37 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaPlusCircle } from "react-icons/fa";
 import { onSnapshot, doc, db } from "../auth";
+import { useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
 
-function Home({
-  username,
-  setPage,
-  titles,
-  setTitles,
-  timestamps,
-  setTimestamps,
-  setTitle,
-  setCreatedTime,
-}) {
+function Home() {
+
+  const navigate=useNavigate();
+
+  const [titles,setTitles]=useState();
+
+  useEffect(()=>{
+    const user=getAuth().currentUser;
+    const unsub = onSnapshot(doc(db, user.email, "titles"), (doc) => {
+      console.log(doc.data());
+    });
+
+    return () => {
+      unsub();
+    };
+  })
+
   const gotoNewTitle = () => {
-    setPage("newTitle");
-    return;
+    navigate("/new-title")
   };
 
   const gotoTitlePage = (title, timestamp) => {
-    setTitle(title);
-    setPage("titlePage");
-    setCreatedTime(timestamp);
-    return;
+    navigate("/title-page")
   };
 
   return (
     <div className="home">
-      <div className="top"></div>
+      {/* <div className="top"></div>
       <div className="notes">
         <div className="add" onClick={gotoNewTitle}>
           <FaPlusCircle className="addIcon" />
@@ -51,7 +56,7 @@ function Home({
             </span>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
