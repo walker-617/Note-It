@@ -28,8 +28,8 @@ const checkUser = async (username, password) => {
   }
 };
 
-const getTitles = async (username) => {
-  const res = await getDoc(doc(db, username, "all_titles"));
+async function getTitles(email){
+  const res = await getDoc(doc(db, email, "all_titles"));
   return res.data();
 };
 
@@ -43,37 +43,12 @@ const getTitleData = async (username, title) => {
   return res.data();
 };
 
-const addTitle = async (username, title, timestamp) => {
-  const res = await setDoc(doc(db, username, title), {}).then(() => {
-    setDoc(
-      doc(db, username, "all_titles"),
-      {
-        titles: arrayUnion(title),
-        timestamps: arrayUnion(timestamp),
-      },
-      { merge: true }
-    );
-  });
-};
-
 const addNote = async (username, title, note, timestamp) => {
   const res = await setDoc(
     doc(db, username, title),
     {
       notes: arrayUnion(note),
       timestamps: arrayUnion(timestamp),
-    },
-    { merge: true }
-  );
-};
-
-const deleteTitle = async (username, title, timestamp) => {
-  const res = await deleteDoc(doc(db, username, title));
-  setDoc(
-    doc(db, username, "all_titles"),
-    {
-      titles: arrayRemove(title),
-      timestamps: arrayRemove(timestamp),
     },
     { merge: true }
   );
@@ -90,18 +65,49 @@ const deleteNote = async (username, title, note, timestamp) => {
   );
 };
 
-const updateTitle = async (
-  username,
-  oldTitle,
-  newTitle,
-  oldTimestamp,
-  newTimestamp
-) => {
-  const data = await getDoc(doc(db, username, oldTitle));
-  deleteTitle(username, oldTitle, oldTimestamp);
-  addTitle(username, newTitle, newTimestamp);
-  setDoc(doc(db, username, newTitle), data.data(), { merge: true });
-};
+function addTitle(email, title, timestamp, data={}) {
+  setDoc(doc(db, email, title), data, { merge: true });
+  setDoc(
+    doc(db, email, "all_titles"),
+    {
+      titles: arrayUnion({ title, timestamp }),
+    },
+    { merge: true }
+  );
+}
+
+function deleteTitle(username, title, timestamp) {
+  deleteDoc(doc(db, username, title));
+  setDoc(
+    doc(db, username, "all_titles"),
+    {
+      titles: arrayRemove({ title, timestamp }),
+    },
+    { merge: true }
+  );
+}
+
+function updateTitle(email, oldTitle, newTitle, oldTimestamp, newTimestamp) {
+  getDoc(doc(db, email, oldTitle)).then((data) => {
+    deleteTitle(email, oldTitle,oldTimestamp);
+    addTitle(email, newTitle, newTimestamp, data.data());
+  });
+}
+
+async function checkPageAndTitle(email, title_, updatedTitle_) {
+  const data = await getTitles(email);
+  let page = false;
+  let titleExists = false;
+  for (let title of data.titles) {
+    if (title["title"] === title_) {
+      page = true;
+    }
+    if (title["title"] === updatedTitle_) {
+      titleExists = true;
+    }
+  }
+  return [page, titleExists];
+}
 
 const updateNote = (
   username,
@@ -129,4 +135,5 @@ export {
   onSnapshot,
   doc,
   db,
+  checkPageAndTitle
 };

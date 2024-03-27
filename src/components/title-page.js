@@ -14,6 +14,7 @@ import {
   onSnapshot,
   doc,
   db,
+  checkPageAndTitle,
   getTitles,
 } from "../auth";
 
@@ -24,24 +25,33 @@ function TitlePage() {
   const titleRef = useRef("");
   const noteRef = useRef("");
 
-  const [notes, setNotes] = useState([]);
-  const [changeNotes, setChangeNotes] = useState(true);
-  const [editNote, setEditNote] = useState(false);
+  const [editNotes, setEditNotes] = useState([]);
   const [editTitle, setEditTitle] = useState(false);
   const [Loading, setLoading] = useState(true);
-  
-  const [title,setTitle] = useState(location.state.title);
-  const [t_timestamp,setT_timestamp] = useState(location.state.timestamp);
+  const [error, setError] = useState("");
+
+  const [email, setEmail] = useState("");
+  const [notes, setNotes] = useState([]);
+  const [title, setTitle] = useState("");
+  const [t_timestamp, setT_timestamp] = useState("");
+
+  useEffect(() => {
+    setTitle(location.state.title);
+    setT_timestamp(location.state.timestamp);
+  }, []);
 
   useEffect(() => {
     let unsubscribe;
-
     const authStateChanged = getAuth().onAuthStateChanged((user) => {
       if (user) {
-        unsubscribe = onSnapshot(doc(db, user.email, title), (doc) => {
-          setNotes(doc.data().notes);
-          setLoading(false);
-        });
+        setEmail(user.email);
+        if (title) {
+          unsubscribe = onSnapshot(doc(db, user.email, title), (doc) => {
+            setNotes(doc.data()?.notes);
+            setLoading(false);
+            setEditNotes(new Array(doc.data()?.notes.length).fill(false));
+          });
+        }
       }
     });
 
@@ -51,7 +61,7 @@ function TitlePage() {
         unsubscribe();
       }
     };
-  }, []);
+  }, [title]);
 
   // const handleTitle = () => {
   //   setEditTitle(true);
@@ -64,28 +74,62 @@ function TitlePage() {
 
   // const [error, setError] = useState("load");
 
-  // const handleUpdate = async () => {
-  //   const check = await checkTitle(username, title);
-  //   if (!check) {
-  //     setError("no page");
-  //     return;
-  //   }
-  //   var newTitle = titleRef.current.value;
-  //   newTitle = newTitle.trim().replace(/\s+/g, " ");
-  //   if (titles?.includes(newTitle)) {
-  //     setError("exists");
-  //     return;
-  //   }
-  //   if (newTitle !== "") {
-  //     const time = getTimestamp();
-  //     updateTitle(username, title, newTitle, createdTime, time);
-  //     setChange(!change);
-  //     setTitle(newTitle);
-  //     setCreatedTime(time);
-  //   }
-  //   setError("");
-  //   setEditTitle(false);
-  // };
+  function validateDocumentName(name) {
+    if (!name.trim()) {
+      return "title cannot be empty.";
+    }
+
+    if (/^[0-9]/.test(name)) {
+      return "title cannot start with a number.";
+    }
+
+    if (!/^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name)) {
+      return "title must consist of alphanumerics, '_', and '$'";
+    }
+
+    if (name.length >= 1000) {
+      return "title must be less than 1,000 characters";
+    }
+    return "title is valid.";
+  }
+
+  async function handleUpdate() {
+    var newTitle = titleRef.current.value;
+    newTitle = newTitle.trim().replace(/\s+/g, " ");
+
+    const x = validateDocumentName(newTitle);
+    if (x !== "title is valid.") {
+      setError(x);
+      return;
+    }
+
+    const [page, titleExists] = await checkPageAndTitle(email, title, newTitle);
+
+    if (!page) {
+      setError("no page");
+      return;
+    }
+    if (newTitle === title) {
+      setError("same title");
+      return;
+    }
+    if (titleExists) {
+      setError("title already exists");
+      return;
+    }
+    const time = getTimestamp();
+    updateTitle(email, title, newTitle, t_timestamp, time);
+    setEditTitle(false);
+    setTitle(newTitle);
+    setT_timestamp(time);
+    setError("");
+    setEditTitle(false);
+  }
+
+  function handleCancel() {
+    setEditTitle(false);
+    setError("");
+  }
 
   // const createNote = async () => {
   //   const check = await checkTitle(username, title);
@@ -108,16 +152,16 @@ function TitlePage() {
   //   noteRef.current.value = "";
   // };
 
-  // const handleDelete = async () => {
-  //   const check = await checkTitle(username, title);
-  //   if (!check) {
-  //     setError("no page");
+  // function handleUpdate(){
+  //   const check = checkTitle(email, title);
+  //   if (check) {
+  //     setError("title already exists");
   //     return;
   //   }
-  //   deleteTitle(username, title, createdTime).then(() => {
-  //     setChange(!change);
-  //     setPage("home");
-  //   });
+  //   // deleteTitle(email, title).then(() => {
+  //   //   setChange(!change);
+  //   //   setPage("home");
+  //   // });
   //   return;
   // };
 
@@ -125,15 +169,36 @@ function TitlePage() {
   //   setError("");
   // };
 
+  function toggleEditNote(index) {
+    setEditNotes((prevEditNotes) => {
+      const newEditNotes = [...prevEditNotes];
+      for (let i = 0; i < newEditNotes.length; i++) {
+        if (i !== index) {
+          newEditNotes[i] = false;
+        }
+      }
+      newEditNotes[index] = !newEditNotes[index];
+      return newEditNotes;
+    });
+  }
+  
+
   return (
     <div className="home">
       <div className="title-page">
+        {error ? (
+          <span className="title-exists" align="center">
+            {error}
+          </span>
+        ) : (
+          ""
+        )}
         {editTitle ? (
           <div>
             <textarea
               ref={titleRef}
               className="edit-title"
-              placeholder={title}
+              placeholder="title cannot be empty"
               defaultValue={title}
               required
             ></textarea>
@@ -142,30 +207,24 @@ function TitlePage() {
               type="submit"
               value="Update"
               className="button"
-              // onClick={handleUpdate}
+              onClick={() => {
+                handleUpdate();
+              }}
             />
             <span style={{ margin: "10px" }}></span>
             <input
               type="submit"
               value="Cancel"
               className="button"
-              onClick={()=> setEditTitle(false)}
+              onClick={() => {
+                handleCancel();
+              }}
             />
-            {/* {error === "exists" ? (
-              <span className="title-exists" align="center">
-                Title already exists
-              </span>
-            ) : (
-              ""
-            )} */}
           </div>
         ) : (
           <div className="title">
             {title}{" "}
-            <FaPen
-              className="editIcon"
-              onClick={()=> setEditTitle(true)}
-            />
+            <FaPen className="editIcon" onClick={() => setEditTitle(true)} />
             <span className="createdTime">
               <i>{t_timestamp}</i>
             </span>
@@ -197,75 +256,68 @@ function TitlePage() {
         <span className="old-notes">Old notes :</span>
         {/* {error === "load" ? <div align="center">Loading...</div> : ""} */}
         {Loading ? (
-          <div
-                className="total-note"
-                align="end"
-              >
-                <div className="timestamp" align="end">
-                  <i>Loading...</i>
-                </div>
-                <div className="title-page-note" style={{ textAlign: "start" }}>
-                  <span className="note-text">
-                    Loading...
-                  </span>
-                </div>
-              </div>
+          <div className="total-note" align="end">
+            <div className="timestamp" align="end">
+              <i>Loading...</i>
+            </div>
+            <div className="title-page-note" style={{ textAlign: "start" }}>
+              <span className="note-text">Loading...</span>
+            </div>
+          </div>
         ) : (
-          notes.map((note, index) =>
-            editNote ? (
-              <div className="total-note" align="end">
-                {/* <textarea
-                ref={noteRef}
-                className="edit-note"
-                placeholder={note}
-                // onClick={handleClick}
-                defaultValue={note}
-              ></textarea> */}
-                {/* <FaTrash className="deleteNote"
-              //  onClick={_deleteNote}
-               /> */}
-                {/* <div style={{ margin: "-20px" }}></div> */}
-                {/* {error ? (
-                <span className="title-exists" align="center">
-                  Note already exists
-                </span>
+          notes.map((note, index) => (
+            <div
+              className="total-note"
+              key={notes[notes.length - index - 1].timestamp}
+              align="end"
+            >
+              {editNotes[notes.length - index - 1] ? (
+                <>
+                  <textarea
+                    ref={noteRef}
+                    className="edit-note"
+                    placeholder="Note cannot be empty"
+                    defaultValue={notes[notes.length - index - 1].note}
+                  ></textarea>
+                  <FaTrash
+                    className="deleteNote"
+                    //  onClick={_deleteNote}
+                  />
+                  <div style={{ margin: "-20px" }}></div>
+                  <input
+                    type="submit"
+                    value="Update"
+                    className="button"
+                    // onClick={handleEdit}
+                  />
+                  <span style={{ margin: "10px" }}></span>
+                  <input
+                    type="submit"
+                    value="Cancel"
+                    className="button"
+                    onClick={() => toggleEditNote(notes.length - index - 1)}
+                  />
+                  <br></br>
+                  <br></br>
+                </>
               ) : (
-                ""
-              )} */}
-                {/* <input
-                type="submit"
-                value="Update"
-                className="button"
-                // onClick={handleEdit}
-              /> */}
-                {/* <span style={{ margin: "10px" }}></span> */}
-                {/* <input
-                type="submit"
-                value="Cancel"
-                className="button"
-                // onClick={handleCancel}
-              /> */}
-                {/* <br></br> */}
-                {/* <br></br> */}
-              </div>
-            ) : (
-              <div
-                className="total-note"
-                align="end"
-                // onClick={handleNote}
-                key={notes[notes.length - index - 1].timestamp}
-              >
-                <div className="timestamp" align="end">
-                  <i>{notes[notes.length - index - 1].timestamp}</i>
-                </div>
-                <div className="title-page-note" style={{ textAlign: "start" }}>
-                  <span className="note-text">
-                    {notes[notes.length - index - 1].note}
-                  </span>
-                </div>
-              </div>
-            )
-          )
+                <>
+                  <div className="timestamp" align="end">
+                    <i>{notes[notes.length - index - 1].timestamp}</i>
+                  </div>
+                  <div
+                    className="title-page-note"
+                    style={{ textAlign: "start" }}
+                    onClick={() => toggleEditNote(notes.length - index - 1)}
+                  >
+                    <span className="note-text">
+                      {notes[notes.length - index - 1].note}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+          ))
         )}
       </div>
       <div style={{ margin: "50px" }}></div>
