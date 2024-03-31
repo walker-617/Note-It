@@ -1,0 +1,121 @@
+import { useEffect, useState } from "react";
+import { getAuth } from "firebase/auth";
+import logo_nbg_light from "../images/logo_nbg_light.png";
+import logo_nbg_dark from "../images/logo_nbg_dark.png";
+import { onSnapshot, doc, db } from "../auth";
+import { FaTrash } from "react-icons/fa";
+import { MdOutlineLogout } from "react-icons/md";
+import { BiSolidSun } from "react-icons/bi";
+import { BiSolidMoon } from "react-icons/bi";
+import { useNavigate } from "react-router-dom";
+
+function Account({mode,setMode}) {
+  const [imageURL, setImageURL] = useState(logo_nbg_light);
+  const [openPopup, setOpenPopup] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [count, setCount] = useState(0);
+
+  const [show, setShow] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let unsubscribe;
+    const authStateChanged = getAuth().onAuthStateChanged((user) => {
+      if (user) {
+        setShow(true);
+        setImageURL(user.photoURL.replace("s96-c", "s192-c"));
+        setName(user.displayName);
+        setEmail(user.email);
+        unsubscribe = onSnapshot(doc(db, user.email, "all_titles"), (doc) => {
+          setCount(doc.data()?.titles?.length ?? 0);
+        });
+      }
+    });
+
+    return () => {
+      authStateChanged();
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, []);
+
+  function signOut() {
+    getAuth()
+      .signOut()
+      .then(() => {
+        setOpenPopup(false);
+        setShow(false);
+        navigate("/", { replace: true });
+      });
+  }
+
+  function changeModeTo(mode_) {
+    localStorage.setItem("mode",mode_);
+    setMode(mode_);
+  }
+
+  return (
+    <>
+      {show ? (
+        <>
+          <div className="account">
+            <img
+              src={imageURL}
+              className="user-image"
+              onClick={() => setOpenPopup(true)}
+            />
+          </div>
+          {openPopup ? (
+            <>
+              <div
+                className="popup-background"
+                onClick={() => setOpenPopup(false)}
+              ></div>
+              <div className="account-popup">
+                <div className="top-container">
+                  <img src={imageURL} className="user-image-popup" />
+                  <MdOutlineLogout
+                    className="logout"
+                    onClick={() => signOut()}
+                  />
+                  {mode === "dark" ? (
+                    <BiSolidMoon
+                      className="dark-mode"
+                      onClick={() => changeModeTo("light")}
+                    />
+                  ) : (
+                    <BiSolidSun
+                      className="light-mode"
+                      onClick={() => changeModeTo("dark")}
+                    />
+                  )}
+                </div>
+                <div className="bottom-container">
+                  <div className="user-name">{name.toUpperCase()}</div>
+                  <div className="user-email">{email}</div>
+                  <div className="num-notes" style={{ color: "white" }}>
+                    <div>Titles count</div>
+                    <div>{count}</div>
+                  </div>
+                  <div className="delete-all">
+                    <FaTrash className="delete-all-icon" />
+                    <div>Delete all titles</div>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            ""
+          )}
+        </>
+      ) : (
+        ""
+      )}
+    </>
+  );
+}
+
+export default Account;

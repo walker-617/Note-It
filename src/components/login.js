@@ -1,55 +1,54 @@
-import React, { useRef, useState } from "react";
-import { checkUser } from "../auth";
+import { useNavigate } from "react-router-dom";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import google from "../google_black.png";
+import { useEffect, useState } from "react";
+import { FcGoogle } from "react-icons/fc";
 
-function Login({ setPage, setUsername }) {
-  const usernameRef = useRef(null);
-  const passwordRef = useRef(null);
-  const [error, setError] = useState();
+function Login() {
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
 
-  const verifyUser = (event) => {
-    event.preventDefault();
-    const username = usernameRef.current.value;
-    const password = passwordRef.current.value;
-    checkUser(username, password).then((res) => {
-      if (res === "user not found" || res === "incorrect password") {
-        setError(res);
-        return;
+  const [load, setLoad] = useState(true);
+
+  useEffect(() => {
+    const authStateChanged = getAuth().onAuthStateChanged((user) => {
+      if (user) {
+        navigate("/home", { replace: true });
+      } else {
+        setLoad(false);
       }
-      setUsername(username);
-      setPage("home");
-      return;
     });
-  };
+
+    return () => {
+      authStateChanged();
+    };
+  }, []);
+
+  function GoogleSignIn() {
+    signInWithPopup(getAuth(), new GoogleAuthProvider())
+      .then((result) => {
+        navigate("/home", { replace: true });
+      })
+      .catch((error) => {
+        setError("error : "+error.code);
+      });
+  }
 
   return (
-    <>
-      <form onSubmit={verifyUser}>
-        <div align="center" className="login">
-          <input
-            ref={usernameRef}
-            type="text"
-            placeholder="username"
-            className="username"
-            required
-          />
-          <br />
-          <br />
-          <input
-            ref={passwordRef}
-            type="password"
-            placeholder="password"
-            className="password"
-            required
-          />
-          <br />
-          <input type="submit" value="Login" className="button" />
-        </div>
-      </form>
-      <br></br>
-      <div style={{ color: "red" }} align="center">
-        {error}
-      </div>
-    </>
+    <div className="login">
+      {load ? (
+        "Loading..."
+      ) : (
+        <>
+          Sign in with
+          <div className="google" onClick={() => GoogleSignIn()}>
+            <FcGoogle />
+            <span>oogle</span>
+          </div>
+          <div>{error}</div>
+        </>
+      )}
+    </div>
   );
 }
 

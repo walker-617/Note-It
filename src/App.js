@@ -1,82 +1,62 @@
 import "./App.css";
 import Login from "./components/login";
-import React, { useState, useEffect } from "react";
 import Home from "./components/home";
 import NewTitle from "./components/new-title";
 import TitlePage from "./components/title-page";
+import Account from "./components/account";
+import Header from "./components/header";
+import Error from "./components/ErrorNotFound";
+
 import { onSnapshot, doc, db } from "./auth";
 
+import React, { useState, useEffect } from "react";
+import { BrowserRouter, MemoryRouter, Routes, Route } from "react-router-dom";
+
 function App() {
-  const [page, setPage] = useState("login");
-  const [username, setUsername] = useState("o");
-  const [title, setTitle] = useState();
-  const [createdTime, setCreatedTime] = useState();
-  const [titles, setTitles] = useState([]);
-  const [timestamps, setTimestamps] = useState([]);
-  const [change, setChange] = useState(true);
-  var component;
+  const [mode, setMode] = useState("dark");
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(doc(db, username, "all_titles"), (doc) => {
-      setTitles(doc.data()?.titles);
-      setTimestamps(doc.data()?.timestamps);
-    });
+    const mode_ = localStorage.getItem("mode");
+    if (mode_) {
+      setMode(mode_);
+    }
+  }, []);
 
-    return () => {
-      unsubscribe();
-    };
-  }, [username, change]);
+  useEffect(() => {
+    const root = document.documentElement;
 
-  if (page === "home") {
-    component = (
-      <Home
-        username={username}
-        setPage={setPage}
-        titles={titles}
-        setTitles={setTitles}
-        timestamps={timestamps}
-        setTimestamps={setTimestamps}
-        setTitle={setTitle}
-        setCreatedTime={setCreatedTime}
-      />
-    );
-  } else if (page === "newTitle") {
-    component = (
-      <NewTitle
-        username={username}
-        setPage={setPage}
-        setTitle={setTitle}
-        setCreatedTime={setCreatedTime}
-        titles={titles}
-        setTitles={setTitles}
-        change={change}
-        setChange={setChange}
-      />
-    );
-  } else if (page === "titlePage") {
-    component = (
-      <TitlePage
-        username={username}
-        setPage={setPage}
-        title={title}
-        createdTime={createdTime}
-        setTitle={setTitle}
-        setCreatedTime={setCreatedTime}
-        titles={titles}
-        setTitles={setTitles}
-        change={change}
-        setChange={setChange}
-      />
-    );
-  } else {
-    component = <Login setPage={setPage} setUsername={setUsername} />;
-  }
+    document.querySelector(
+      "link[rel='shortcut icon']"
+    ).href = `/logo_nbg_${mode}.png`;
+
+    document.querySelector("link[rel='icon']").href = `/logo_nbg_${mode}.png`;
+
+    document.querySelector(
+      "link[rel='apple-touch-icon']"
+    ).href = `/logo_nbg_${mode}.png`;
+
+    if (mode === "dark") {
+      root.style.setProperty("--main-color", "black");
+      root.style.setProperty("--opp-color", "white");
+    } else {
+      root.style.setProperty("--main-color", "white");
+      root.style.setProperty("--opp-color", "black");
+    }
+  }, [mode]);
+
   return (
-    <div>
-      <div align="center" className="heading">
-        My Notes
-      </div>
-      {component}
+    <div className="home">
+      <BrowserRouter>
+        <Account mode={mode} setMode={setMode} />
+        <Header mode={mode} setMode={setMode} />
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/new-title" element={<NewTitle />} />
+          <Route path="/title-page" element={<TitlePage />} />
+          <Route path="*" element={<Error />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

@@ -1,59 +1,65 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { FaHome } from "react-icons/fa";
-import { addTitle } from "../auth";
+import { addTitle, checkPageAndTitle } from "../auth";
+import { getAuth } from "firebase/auth";
+import { getTimestamp } from "../utils";
+import { useNavigate } from "react-router-dom";
+import Header from "./header";
+import Back from "./back";
 
-function NewTitle({
-  username,
-  setPage,
-  setTitle,
-  titles,
-  setCreatedTime,
-  change,
-  setChange,
-}) {
-  const gotoHome = () => {
-    setPage("home");
-    return;
-  };
+function NewTitle() {
   const [error, setError] = useState("");
   const titleRef = useRef(null);
 
-  const handleSubmit = async (event) => {
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const authStateChanged = getAuth().onAuthStateChanged((user) => {
+      if (user) {
+        setEmail(user.email);
+      }
+      else{
+        navigate("/", { replace:true });
+      }
+    });
+
+    return () => {
+      authStateChanged();
+    };
+  }, []);
+
+  async function handleSubmit() {
     setError("load");
-    event.preventDefault();
     const title = titleRef.current.value;
-    if (titles?.includes(title)) {
+    const [page, titleExists] = await checkPageAndTitle(email, "", title);
+    if (titleExists) {
       setError("exists");
       return;
     }
     const time = getTimestamp();
-    addTitle(username, title, time);
-    setTitle(title);
-    setChange(!change);
-    setPage("titlePage");
-    setCreatedTime(time);
-    return;
-  };
+    addTitle(email, title, time);
+    navigate("/title-page", { state: { title, time }, replace: true });
+  }
 
   return (
-    <div className="home">
-      <div className="top">
-        <div>
-          <FaHome className="homeIcon" onClick={gotoHome} />
-        </div>
-      </div>
-      <br></br>
+    <>
+      <Back />
       <div className="new" align="center">
-        <form onSubmit={handleSubmit}>
-          <input
-            ref={titleRef}
-            className="title-input"
-            placeholder="Enter title"
-            required
-          />
-          <br></br>
-          <input type="submit" value="Create" className="button" />
-        </form>
+        <input
+          ref={titleRef}
+          className="title-input"
+          placeholder="Enter title"
+          required
+        />
+        <br></br>
+        <input
+          type="submit"
+          value="Create"
+          className="button"
+          onClick={() => handleSubmit()}
+        />
         <br></br>
         {error === "exists" ? (
           <div style={{ color: "red" }} align="center">
@@ -64,41 +70,8 @@ function NewTitle({
         )}
         {error === "load" ? <div align="center">Loading...</div> : ""}
       </div>
-    </div>
+    </>
   );
-}
-
-function getTimestamp() {
-  const currentDate = new Date();
-
-  const options = { hour: "numeric", minute: "numeric", second: "numeric" };
-  const currentTime = currentDate.toLocaleString("en-US", options);
-
-  const day = currentDate.getDate();
-  const month = currentDate.toLocaleString("en-US", { month: "long" });
-  const year = currentDate.getFullYear();
-  const ordinalSuffix = getOrdinalSuffix(day);
-
-  const formattedDateString = day + ordinalSuffix + " " + month + " " + year;
-
-  return currentTime + ", " + formattedDateString;
-}
-
-function getOrdinalSuffix(day) {
-  if (day >= 11 && day <= 13) {
-    return "th";
-  }
-
-  switch (day % 10) {
-    case 1:
-      return "st";
-    case 2:
-      return "nd";
-    case 3:
-      return "rd";
-    default:
-      return "th";
-  }
 }
 
 export default NewTitle;

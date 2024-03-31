@@ -1,25 +1,25 @@
 {
-  "short_name": "My Notes",
-  "name": "My Notes",
+  "short_name": "Note It",
+  "name": "Note It",
   "icons": [
     {
-      "src": "favicon.ico",
-      "type": "image/x-icon",
-      "sizes": "192x192"
-    },
-    {
-      "src": "favicon.ico",
+      "src": "logo_dark.png",
       "type": "image/x-icon",
       "sizes": "512x512"
     },
     {
-      "src": "my-notes-logo.png",
-      "type": "image/png",
+      "src": "logo_light.png",
+      "type": "image/x-icon",
+      "sizes": "512x512"
+    },
+    {
+      "src": "logo_nbg_dark.png",
+      "type": "image/x-icon",
       "sizes": "192x192"
     },
     {
-      "src": "my-notes-logo.png",
-      "type": "image/png",
+      "src": "logo_nbg_light.png",
+      "type": "image/x-icon",
       "sizes": "512x512"
     }
   ],
