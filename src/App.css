@@ -1,27 +1,50 @@
-body::-webkit-scrollbar{
+:root {
+  --main-color: black;
+  --opp-color: white;
+  transition: 1s linear;
+}
+
+/* *{
+  transition: 0.2s linear;
+} */
+
+body::-webkit-scrollbar {
   display: none;
 }
 
-.heading{
-  color: white;
-  font-weight: bold;
-  margin-top: 40px;
+body {
+  margin: 0;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--main-color);
 }
 
-.login{
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.heading {
+  color: var(--opp-color);
+  font-weight: bold;
+  /* margin-top: 40px; */
+}
+
+.login {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  color: white;
+  color: var(--opp-color);
   gap: 20px;
   font-size: 20px;
   margin: 100px;
 }
 
-.title-name{
+.title-name {
   padding: 5px;
-  color: black;
+  color: var(--main-color);
   font-weight: bold;
   font-size: 20px;
   position: absolute;
@@ -29,79 +52,97 @@ body::-webkit-scrollbar{
   left: 0;
 }
 
-.title-time{
+.title-time {
   padding: 5px;
-  color: black;
+  color: var(--main-color);
   font-size: 12px;
   position: absolute;
   bottom: 0;
   right: 0;
 }
 
-.google{
-  padding: 20px;
-  border: none;
-  background-color: white;
-  border-radius: 10px;
-  width: 100px;
+.google {
+  font-weight: bold;
+  font-family: sans-serif;
+  color: var(--main-color);
+  background-color: var(--opp-color);
+  border: 3px solid var(--opp-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  padding: 7px;
+  border-radius: 60px;
+  cursor: pointer;
 }
 
-.username:focus, .password:focus{
+.google:hover {
+  color: var(--opp-color);
+  background-color: var(--main-color);
+}
+
+.username:focus,
+.password:focus {
   outline: none;
-  background-color: white;
+  background-color: var(--opp-color);
   border-radius: 5px;
-  color: black;
+  color: var(--main-color);
 }
 
-.button{
+.button {
   margin-top: 30px;
-  background-color: white;
+  color: var(--main-color);
+  background-color: var(--opp-color);
   border: none;
   font-weight: bold;
-  padding:5px 15px 5px  15px ;
+  padding: 5px 15px 5px 15px;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.button:hover{
-  background-color: black;
-  color: white;
+.button:hover {
+  background-color: var(--main-color);
+  color: var(--opp-color);
 }
 
-.home{
-  color: white;
-  margin-top: 80px;
+.home {
+  color: var(--opp-color);
+  margin-top: 20px;
+  margin-bottom: 100px;
 }
-.top{
+
+.top {
   margin: auto;
-  color: white;
-  width:1000px;
+  color: var(--opp-color);
+  width: 1000px;
   max-width: 90%;
   margin-bottom: 30px;
   display: flex;
   justify-content: space-between;
 }
 
-.homeIcon,.addIcon,.editIcon{
-  color: white;
+.homeIcon,
+.addIcon,
+.editIcon {
+  color: var(--opp-color);
   cursor: pointer;
 }
 
-.title-input{
-  color: white;
-  background-color: black;
+.title-input {
+  color: var(--opp-color);
+  background-color: var(--main-color);
   font-weight: bold;
-  width:700px;
+  width: 700px;
   max-width: 90%;
 }
 
-.title-input:focus{
-  background-color: white;
-  color: black;
+.title-input:focus {
+  background-color: var(--opp-color);
+  color: var(--main-color);
   outline: none;
 }
 
-.notes{
+.notes {
   margin: auto;
   max-width: 1000px;
   display: flex;
@@ -109,24 +150,24 @@ body::-webkit-scrollbar{
   justify-content: center;
 }
 
-.note{
+.note {
   position: relative;
-  background-color: white;
+  background-color: var(--opp-color);
   margin: 10px;
   border-radius: 7px;
   cursor: pointer;
 }
 
-.note:hover .title-time{
-  color: white;
+.note:hover .title-time {
+  color: var(--opp-color);
 }
 
-.note:hover .title-name{
-  color: white;
+.note:hover .title-name {
+  color: var(--opp-color);
 }
 
-.add{
-  border: 2px dashed white;
+.add {
+  border: 2px dashed var(--opp-color);
   margin: 10px;
   border-radius: 7px;
   cursor: pointer;
@@ -135,20 +176,21 @@ body::-webkit-scrollbar{
   align-items: center;
 }
 
-.add:hover{
-  border: 2px solid white;
+.add:hover {
+  border: 2px solid var(--opp-color);
 }
 
-.title-page{
+.title-page {
   margin: auto;
-  width:1000px;
+  width: 1000px;
   max-width: 90%;
 }
 
-.new-note,.edit-title{
-  color: white;
-  background-color: black;
-  border: 2px solid white;
+.new-note,
+.edit-title {
+  color: var(--opp-color);
+  background-color: var(--main-color);
+  border: 2px solid var(--opp-color);
   padding: 7px;
   border-radius: 10px;
   height: 100px;
@@ -156,125 +198,417 @@ body::-webkit-scrollbar{
   max-width: 90%;
 }
 
-.new-note:focus,.edit-title:focus{
-  background-color: white;
-  color: black;
+.new-note:focus,
+.edit-title:focus {
+  background-color: var(--opp-color);
+  color: var(--main-color);
   outline: none;
 }
 
-.total-note{
+.total-note {
   margin-top: 10px;
 }
 
-.title-page-note{
+.title-page-note {
   display: inline-block;
   padding: 10px;
-  background-color: white;
+  background-color: var(--opp-color);
   border-radius: 10px;
   cursor: pointer;
 }
 
-.createdTime{
+.createdTime {
   display: inline-block;
 }
 
-.no-notes{
+.no-notes {
   margin-top: 50px;
 }
 
-.edit-note{
+.edit-note {
   resize: vertical;
-  color: white;
-  background-color: black;
-  border: 2px solid white;
+  color: var(--opp-color);
+  background-color: var(--main-color);
+  border: 2px solid var(--opp-color);
   border-radius: 10px;
 }
 
-.edit-note:focus{
-  background-color: white;
-  color: black;
+.edit-note:focus {
+  background-color: var(--opp-color);
+  color: var(--main-color);
   outline: none;
 }
 
-.title-exists{
+.title-exists {
   color: red;
   margin: 10px;
 }
 
+
+.note-text {
+  display: inline-block;
+  white-space: pre-wrap;
+  font-size: 20px;
+  color: var(--main-color);
+  max-width: min(90vw, 900px);
+  max-height: 6em;
+  overflow: overlay;
+  overflow-wrap: break-word;
+}
+
+.note-text::-webkit-scrollbar {
+  width: 10px;
+}
+
+.note-text::-webkit-scrollbar-track {
+  background: #d6d6d6;
+  border-radius: 10px;
+}
+
+.note-text::-webkit-scrollbar-thumb {
+  background: #000000;
+  border-radius: 10px;
+}
+
+.account {
+  position: absolute;
+  top: 30px;
+  right: 50px;
+  z-index: 100;
+}
+
+.user-image {
+  height: 50px;
+  width: 50px;
+  border-radius: 50px;
+  cursor: pointer;
+  background-color: var(--opp-color);
+  padding: 5px;
+}
+
+.user-image:hover {
+  height: 60px;
+  width: 60px;
+  padding: 0;
+}
+
+.account-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--opp-color);
+  border: 5px solid var(--opp-color);
+  border-radius: 15px;
+  z-index: 100;
+}
+
+.top-container {
+  width: 300px;
+  height: 75px;
+  background-color: var(--opp-color);
+  border-radius: 10px 10px 0 0;
+  position: relative;
+}
+
+.user-image-popup {
+  position: absolute;
+  height: 75px;
+  width: 75px;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  border-radius: 50px;
+}
+
+.bottom-container {
+  width: 300px;
+  padding-bottom: 20px;
+  background-color: var(--main-color);
+  border-radius: 0 0 10px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.user-name {
+  margin-top: 40px;
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--opp-color);
+}
+
+.user-email {
+  margin-top: 1px;
+  font-size: 12px;
+  color: var(--opp-color)
+}
+
+.num-notes {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.num-notes div {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--opp-color);
+}
+
+.num-notes :nth-child(2) {
+  font-size: 50px;
+}
+
+.delete-all {
+  margin-top: 10px;
+  color: var(--opp-color);
+  background-color: var(--main-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid rgb(232, 64, 64);
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.delete-all:hover {
+  color: var(--main-color);
+  background-color: var(--opp-color);
+}
+
+.delete-all-icon {
+  color: rgb(232, 64, 64);
+}
+
+.logout {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: var(--main-color);
+  background-color: var(--opp-color);
+  border-radius: 0px 10px 0px 0px;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.logout:hover {
+  color: var(--opp-color);
+  background-color: var(--main-color);
+}
+
+.dark-mode {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--main-color);
+  background-color: var(--opp-color);
+  border-radius: 10px 0px 0px 0px;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.dark-mode:hover {
+  color: var(--opp-color);
+  background-color: var(--main-color);
+}
+
+.light-mode {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--main-color);
+  background-color: var(--opp-color);
+  border-radius: 10px 0px 0px 0px;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.light-mode:hover {
+  color: var(--opp-color);
+  background-color: var(--main-color);
+}
+
+.popup-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--main-color);
+  opacity: 0.7;
+  cursor: pointer;
+  z-index: 50;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 50px;
+}
+
+.header-letter {
+  font-size: 70px;
+  font-weight: bold;
+}
+
+.header-image {
+  height: 47px;
+  width: 47x;
+  cursor: pointer;
+}
+
+.back {
+  position: absolute;
+  top: 30px;
+  left: 50px;
+  color: var(--opp-color);
+  background-color: var(--main-color);
+  font-size: 50px;
+  height: 50px;
+  width: 50px;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.back:hover {
+  background-color: var(--opp-color);
+  color: var(--main-color);
+}
+
+.no-page-found {
+  color: var(--opp-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 40px;
+  margin-top: 100px;
+}
+
+.goto-home {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 10px;
+  font-weight: bold;
+  background-color: var(--opp-color);
+  color: var(--main-color);
+  border: 2px solid var(--opp-color);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.goto-home:hover {
+  background-color: var(--main-color);
+  color: var(--opp-color);
+}
+
 /* Styles for desktop devices */
 @media (min-width: 768px) {
-  .heading{
+  .heading {
     font-size: 50px;
   }
+
   .note {
     height: 100px;
     width: 200px;
   }
-  .note:hover{
+
+  .note:hover {
     height: 95px;
-    background-color: black;
-    border-bottom: 5px solid white;
+    background-color: var(--main-color);
+    border-bottom: 5px solid var(--opp-color);
   }
-  .add{
+
+  .add {
     height: 100px;
     width: 200px;
   }
-  .username, .password{
+
+  .username,
+  .password {
     font-size: 20px;
   }
-  .button{
-    font-size: 25px;
+
+  .button {
+    font-size: 20px;
   }
-  .title-input{
-    border: 2px solid white;
+
+  .title-input {
+    border: 2px solid var(--opp-color);
     padding: 10px;
     font-size: 30px;
     border-radius: 10px;
   }
-  .title{
+
+  .title {
     font-size: 50px;
     font-weight: bold;
   }
-  .homeIcon,.addIcon{
+
+  .homeIcon,
+  .addIcon {
     font-size: 40px;
   }
-  .old-notes{
+
+  .old-notes {
     font-size: 30px;
   }
-  .note-text{
-    font-size: 20px;
-    color: black;
-  }
-  .timestamp{
+
+  .timestamp {
     font-size: 15px;
-    color: white;
+    color: var(--opp-color);
   }
-  .new-note,.edit-note{
+
+  .new-note,
+  .edit-note {
     font-size: 20px;
   }
-  .edit-title{
+
+  .edit-title {
     font-size: 25px;
     font-weight: bold;
   }
-  .editIcon{
+
+  .editIcon {
     font-size: 25px;
   }
-  .createdTime{
+
+  .createdTime {
     font-size: 15px;
   }
-  .no-notes{
+
+  .no-notes {
     font-size: 20px;
   }
-  .title-page-note{
+
+  .title-page-note {
     margin: 10px 0px 30px 20px;
   }
-  .deleteNote{
+
+  .deleteNote {
     margin: 10px;
     margin-bottom: 20px;
     font-size: 35px;
     cursor: pointer;
   }
-  .edit-note{
+
+  .edit-note {
     padding: 10px;
     border-radius: 10px;
     height: 100px;
@@ -285,92 +619,221 @@ body::-webkit-scrollbar{
 
 /* Styles for mobile devices */
 @media (max-width: 767px) {
-  .heading{
+  .heading {
     font-size: 40px;
   }
+
   .note {
     height: 75px;
     width: 150px;
   }
-  .add{
+
+  .add {
     height: 75px;
     width: 150px;
   }
-  .note:hover{
+
+  .note:hover {
     height: 72px;
-    background-color: black;
-    border-bottom: 3px solid white;
+    background-color: var(--main-color);
+    border-bottom: 3px solid var(--opp-color);
   }
-  .username, .password{
+
+  .username,
+  .password {
     font-size: 15px;
   }
-  .button{
-    font-size: 20px;
+
+  .button {
+    font-size: 15px;
   }
-  .title-input{
-    border: 2px solid white;
+
+  .title-input {
+    border: 2px solid var(--opp-color);
     padding: 5px;
     font-size: 20px;
     border-radius: 5px;
   }
-  .title{
+
+  .title {
     font-size: 35px;
     font-weight: bold;
   }
-  .homeIcon,.addIcon{
+
+  .homeIcon,
+  .addIcon {
     font-size: 30px;
   }
-  .old-notes{
+
+  .old-notes {
     font-size: 20px;
   }
-  .note-text{
+
+  .note-text {
     font-size: 15px;
-    color: black;
+    max-width: min(70vw, 900px);
   }
-  .timestamp{
+
+  .note-text::-webkit-scrollbar {
+    width: 5px;
+    margin-left: 20px;
+  }
+
+  .timestamp {
     font-size: 12px;
-    color: white;
+    color: var(--opp-color);
   }
-  .new-note{
+
+  .new-note {
     font-size: 15px;
+    height: 80px;
+    width: 80%;
   }
-  .edit-title{
+
+  .edit-title {
     font-size: 18px;
     font-weight: bold;
   }
-  .editIcon{
+
+  .editIcon {
     font-size: 18px;
   }
-  .createdTime{
+
+  .createdTime {
     font-size: 10px;
   }
-  .title-page-note{
+
+  .title-page-note {
     margin: 10px 0px 20px 10px;
   }
-  .edit-note{
+
+  .edit-note {
     padding: 5px;
-    border-radius: 10px;
-    height: 100px;
-    width: 700px;
-    max-width: 80%;
+    height: 80px;
+    width: 80%;
   }
-  .deleteNote{
+
+  .deleteNote {
     margin-bottom: 15px;
     margin-left: 5px;
     font-size: 25px;
     cursor: pointer;
   }
-  .home{
-    margin-top: 40px;
+
+  .home {
+    margin-top: 20px;
   }
-  .title-name{
+
+  .title-name {
     font-size: 15px;
   }
-  
-  .title-time{
+
+  .title-time {
     font-size: 8px;
   }
-  .title-exists{
+
+  .title-exists {
     font-size: 10px;
+  }
+
+  .header {
+    margin-top: 50px;
+    margin-bottom: 30px;
+  }
+
+  .header-letter {
+    font-size: 50px;
+  }
+
+  .header-image {
+    height: 40px;
+    width: 40px;
+  }
+
+  .back {
+    top: 20px;
+    left: 20px;
+    height: 40px;
+    width: 40px;
+    font-size: 40px;
+  }
+
+  .account {
+    top: 20px;
+    right: 20px;
+  }
+
+  .user-image {
+    height: 35px;
+    width: 35px;
+    padding: 3px;
+  }
+
+  .user-image:hover {
+    height: 38px;
+    width: 38px;
+    padding: 0;
+  }
+
+  .top-container {
+    width: 250px;
+    height: 65px;
+  }
+
+  .user-image-popup {
+    height: 65px;
+    width: 65px;
+  }
+
+  .bottom-container {
+    width: 250px;
+    padding-bottom: 20px;
+    background-color: var(--main-color);
+    border-radius: 0 0 10px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .user-name {
+    margin-top: 35px;
+    font-size: 20px;
+  }
+
+  .user-email {
+    font-size: 12px;
+  }
+
+  .num-notes {
+    margin-top: 10px;
+  }
+
+  .num-notes div {
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--opp-color);
+  }
+
+  .num-notes :nth-child(2) {
+    font-size: 40px;
+  }
+
+  .delete-all {
+    font-size: 15px;
+  }
+
+  .google {
+    border: 2px solid var(--opp-color);
+    font-size: 30px;
+    padding: 5px;
+  }
+
+  .no-page-found {
+    font-size: 30px;
+  }
+
+  .goto-home {
+    font-size: 17px;
+    gap: 5px;
   }
 }

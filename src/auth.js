@@ -17,55 +17,44 @@ const firebaseConfig = config;
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const checkUser = async (username, password) => {
-  const res = await getDoc(doc(db, username, "auth"));
-  if (!res.exists()) {
-    return "user not found";
-  }
-  const user = res.data();
-  if (password !== user.password) {
-    return "incorrect password";
-  }
-};
-
-async function getTitles(email){
+async function getTitles(email) {
   const res = await getDoc(doc(db, email, "all_titles"));
   return res.data();
-};
+}
 
-const getNotes = (username, title) => getTitleData(username, title);
-
-const getTitleData = async (username, title) => {
-  const res = await getDoc(doc(db, username, title));
-  if (!res.exists()) {
-    return "not found";
-  }
-  return res.data();
-};
-
-const addNote = async (username, title, note, timestamp) => {
-  const res = await setDoc(
-    doc(db, username, title),
+function addNote(email, title, note, timestamp) {
+  setDoc(
+    doc(db, email, title),
     {
-      notes: arrayUnion(note),
-      timestamps: arrayUnion(timestamp),
+      notes: arrayUnion({ note, timestamp }),
     },
     { merge: true }
   );
-};
+}
 
-const deleteNote = async (username, title, note, timestamp) => {
-  const res = await setDoc(
+function deleteNote(username, title, note, timestamp) {
+  setDoc(
     doc(db, username, title),
     {
-      notes: arrayRemove(note),
-      timestamps: arrayRemove(timestamp),
+      notes: arrayRemove({ note, timestamp }),
     },
     { merge: true }
   );
-};
+}
 
-function addTitle(email, title, timestamp, data={}) {
+function updateNote(
+  email,
+  title,
+  oldNote,
+  oldTimestamp,
+  newNote,
+  newTimestamp
+) {
+  deleteNote(email, title, oldNote, oldTimestamp);
+  addNote(email, title, newNote, newTimestamp);
+}
+
+function addTitle(email, title, timestamp, data = {notes:[]}) {
   setDoc(doc(db, email, title), data, { merge: true });
   setDoc(
     doc(db, email, "all_titles"),
@@ -89,7 +78,7 @@ function deleteTitle(username, title, timestamp) {
 
 function updateTitle(email, oldTitle, newTitle, oldTimestamp, newTimestamp) {
   getDoc(doc(db, email, oldTitle)).then((data) => {
-    deleteTitle(email, oldTitle,oldTimestamp);
+    deleteTitle(email, oldTitle, oldTimestamp);
     addTitle(email, newTitle, newTimestamp, data.data());
   });
 }
@@ -109,31 +98,16 @@ async function checkPageAndTitle(email, title_, updatedTitle_) {
   return [page, titleExists];
 }
 
-const updateNote = (
-  username,
-  title,
-  oldNote,
-  oldTimestamp,
-  newNote,
-  newTimestamp
-) => {
-  deleteNote(username, title, oldNote, oldTimestamp);
-  addNote(username, title, newNote, newTimestamp);
-};
-
 export {
-  checkUser,
-  getTitles,
-  getTitleData,
-  getNotes,
-  addTitle,
-  addNote,
-  deleteTitle,
-  deleteNote,
-  updateTitle,
-  updateNote,
-  onSnapshot,
-  doc,
   db,
-  checkPageAndTitle
+  doc,
+  getTitles,
+  addNote,
+  deleteNote,
+  updateNote,
+  addTitle,
+  deleteTitle,
+  updateTitle,
+  onSnapshot,
+  checkPageAndTitle,
 };

@@ -1,30 +1,54 @@
 import { useNavigate } from "react-router-dom";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import google from "../google_black.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FcGoogle } from "react-icons/fc";
 
 function Login() {
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
 
-  const navigate=useNavigate();
-  const [error,setError]=useState("")
+  const [load, setLoad] = useState(true);
 
-  function GoogleSignIn(){
-    signInWithPopup(getAuth(), new GoogleAuthProvider()).then((result) => {
-      navigate("/home")
-    })
-    .catch((error) => {
-      setError("Something went wrong. Try again.")
-    })
+  useEffect(() => {
+    const authStateChanged = getAuth().onAuthStateChanged((user) => {
+      if (user) {
+        navigate("/home", { replace: true });
+      } else {
+        setLoad(false);
+      }
+    });
+
+    return () => {
+      authStateChanged();
+    };
+  }, []);
+
+  function GoogleSignIn() {
+    signInWithPopup(getAuth(), new GoogleAuthProvider())
+      .then((result) => {
+        navigate("/home", { replace: true });
+      })
+      .catch((error) => {
+        setError("error : "+error.code);
+      });
   }
 
   return (
-    <>
-      <div className="login">
-        Sign in with
-        <img src={google} className="google" onClick={GoogleSignIn}/>
-        <div>{error}</div>
-      </div>
-    </>
+    <div className="login">
+      {load ? (
+        "Loading..."
+      ) : (
+        <>
+          Sign in with
+          <div className="google" onClick={() => GoogleSignIn()}>
+            <FcGoogle />
+            <span>oogle</span>
+          </div>
+          <div>{error}</div>
+        </>
+      )}
+    </div>
   );
 }
 
