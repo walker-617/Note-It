@@ -36,8 +36,12 @@ function TitlePage() {
   const [t_timestamp, setT_timestamp] = useState("");
 
   useEffect(() => {
-    setTitle(location.state?.title);
-    setT_timestamp(location.state?.timestamp);
+    if (location.state?.title && location.state?.timestamp) {
+      setTitle(location.state?.title);
+      setT_timestamp(location.state?.timestamp);
+    } else {
+      navigate("/", { replace: true });
+    }
   }, []);
 
   useEffect(() => {
@@ -52,12 +56,8 @@ function TitlePage() {
             setEditNotes(new Array(doc.data()?.notes.length).fill(false));
           });
         }
-        else{
-          navigate("/", { replace:true });
-        }
-      }
-      else{
-        navigate("/", { replace:true });
+      } else {
+        navigate("/", { replace: true });
       }
     });
 
@@ -347,7 +347,13 @@ function TitlePage() {
           ))
         )}
       </div>
-      {notes.length===0?<div align="center" style={{margin:"20px"}}>No old notes</div>:""}
+      {notes.length === 0 ? (
+        <div align="center" style={{ margin: "20px" }}>
+          No old notes
+        </div>
+      ) : (
+        ""
+      )}
       <div style={{ margin: "50px" }}></div>
     </>
   );
