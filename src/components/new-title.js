@@ -19,9 +19,8 @@ function NewTitle() {
     const authStateChanged = getAuth().onAuthStateChanged((user) => {
       if (user) {
         setEmail(user.email);
-      }
-      else{
-        navigate("/", { replace:true });
+      } else {
+        navigate("/", { replace: true });
       }
     });
 
@@ -30,12 +29,45 @@ function NewTitle() {
     };
   }, []);
 
+  function validateDocumentName(name) {
+    if (!name.trim()) {
+      return "title cannot be empty";
+    }
+
+    if (/^[0-9]/.test(name)) {
+      return "title cannot start with a number";
+    }
+
+    if (!/^[a-zA-Z_$][a-zA-Z0-9 _$]*$/.test(name)) {
+      return "title must consist of alphanumerics, spaces, '_', and '$'";
+    }
+
+    if (name.length >= 1000) {
+      return "title must be less than 1,000 characters";
+    }
+    return "title is valid";
+  }
+
   async function handleSubmit() {
     setError("load");
-    const title = titleRef.current.value;
+    let title = titleRef.current.value;
+    title = title.trim().replace(/\s+/g, " ");
+
+    const x = validateDocumentName(title);
+    if (x !== "title is valid") {
+      setError(x);
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return;
+    }
+
     const [page, titleExists] = await checkPageAndTitle(email, "", title);
     if (titleExists) {
-      setError("exists");
+      setError("title already exists");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
     const time = getTimestamp();
@@ -61,14 +93,8 @@ function NewTitle() {
           onClick={() => handleSubmit()}
         />
         <br></br>
-        {error === "exists" ? (
-          <div style={{ color: "red" }} align="center">
-            Title already exists
-          </div>
-        ) : (
-          ""
-        )}
-        {error === "load" ? <div align="center">Loading...</div> : ""}
+        {error && error!=="load"? <div className="error">{error}</div> : ""}
+        {error === "load" ? <div style={{backgroundColor:"var(--main-color)"}}align="center">Loading...</div> : ""}
       </div>
     </>
   );

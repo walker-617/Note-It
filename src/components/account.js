@@ -2,14 +2,15 @@ import { useEffect, useState } from "react";
 import { getAuth } from "firebase/auth";
 import logo_nbg_light from "../images/logo_nbg_light.png";
 import logo_nbg_dark from "../images/logo_nbg_dark.png";
-import { onSnapshot, doc, db } from "../auth";
+import { onSnapshot, doc, db, deleteAllTitles } from "../auth";
 import { FaTrash } from "react-icons/fa";
 import { MdOutlineLogout } from "react-icons/md";
 import { BiSolidSun } from "react-icons/bi";
 import { BiSolidMoon } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
+import { RiLoader3Fill } from "react-icons/ri";
 
-function Account({mode,setMode}) {
+function Account({ mode, setMode }) {
   const [imageURL, setImageURL] = useState(logo_nbg_light);
   const [openPopup, setOpenPopup] = useState(false);
   const [name, setName] = useState("");
@@ -17,6 +18,8 @@ function Account({mode,setMode}) {
   const [count, setCount] = useState(0);
 
   const [show, setShow] = useState(false);
+
+  const [deleting, setDeleting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -53,8 +56,18 @@ function Account({mode,setMode}) {
   }
 
   function changeModeTo(mode_) {
-    localStorage.setItem("mode",mode_);
+    localStorage.setItem("mode", mode_);
     setMode(mode_);
+  }
+
+  function deleteAllTitles_() {
+    setDeleting(true);
+    deleteAllTitles(email).then(() => {
+      setDeleting(false);
+      setOpenPopup(false);
+      setShow(false);
+      navigate("/home", { replace: true });
+    });
   }
 
   return (
@@ -100,10 +113,19 @@ function Account({mode,setMode}) {
                     <div>Titles count</div>
                     <div>{count}</div>
                   </div>
-                  <div className="delete-all">
-                    <FaTrash className="delete-all-icon" />
-                    <div>Delete all titles</div>
-                  </div>
+                  {!deleting ? (
+                    <div className="delete-all" onClick={() => deleteAllTitles_()}>
+                      <FaTrash
+                        className="delete-all-icon"
+                      />
+                      <div>Delete all titles</div>
+                    </div>
+                  ) : (
+                    <div className="delete-all">
+                      <RiLoader3Fill className="delete-all-icon" />
+                      <div>Deleting...</div>
+                    </div>
+                  )}
                 </div>
               </div>
             </>
