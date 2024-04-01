@@ -65,7 +65,6 @@ function Account({ mode, setMode }) {
     deleteAllTitles(email).then(() => {
       setDeleting(false);
       setOpenPopup(false);
-      setShow(false);
       navigate("/home", { replace: true });
     });
   }
@@ -114,10 +113,12 @@ function Account({ mode, setMode }) {
                     <div>{count}</div>
                   </div>
                   {!deleting ? (
-                    <div className="delete-all" onClick={() => deleteAllTitles_()}>
-                      <FaTrash
-                        className="delete-all-icon"
-                      />
+                    <div
+                      className="delete-all"
+                      style={count ? {} : { cursor: "not-allowed" }}
+                      onClick={() => (count ? deleteAllTitles_() : "")}
+                    >
+                      <FaTrash className="delete-all-icon" />
                       <div>Delete all titles</div>
                     </div>
                   ) : (
