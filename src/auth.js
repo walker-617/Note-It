@@ -19,7 +19,7 @@ const db = getFirestore(app);
 
 async function getTitles(email) {
   const res = await getDoc(doc(db, email, "all_titles"));
-  return res.data();
+  return res.data()?res.data():{titles:[]};
 }
 
 function addNote(email, title, note, timestamp) {
