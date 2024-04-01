@@ -8,7 +8,7 @@ import Header from "./header";
 function Home() {
   const navigate = useNavigate();
 
-  const [titles, setTitles] = useState([]);
+  const [titles, setTitles] = useState();
 
   const [loading, setLoading] = useState(true);
 
@@ -21,9 +21,8 @@ function Home() {
           setTitles(doc.data()?.titles ?? []);
           setLoading(false);
         });
-      }
-      else{
-        navigate("/", { replace:true });
+      } else {
+        navigate("/", { replace: true });
       }
     });
 
@@ -35,45 +34,72 @@ function Home() {
     };
   }, []);
 
-  const gotoTitlePage = (title, timestamp) => {
-    navigate("/title-page", { state: { title, timestamp } });
+  const gotoTitlePage = (title, time) => {
+    navigate("/title-page", { state: { title, time } });
     return;
   };
 
   return (
-    <div className="notes">
-      <div className="add" onClick={() => navigate("/new-title")}>
-        <FaPlusCircle className="addIcon" />
-      </div>
-      {loading ? (
-        <div className="note">
-          <span className="title-name">Loading...</span>
-
-          <span className="title-time">
-            <i>Loading...</i>
-          </span>
-        </div>
-      ) : (
-        titles.map((title, index) => (
-          <div
-            className="note"
-            key={titles[titles.length - index - 1].title}
-            onClick={() =>
-              gotoTitlePage(
-                titles[titles.length - index - 1].title,
-                titles[titles.length - index - 1].timestamp
-              )
-            }
-          >
-            <span className="title-name">
-              {titles[titles.length - index - 1].title}
-            </span>
-            <span className="title-time">
-              <i>{titles[titles.length - index - 1].timestamp}</i>
-            </span>
+    <div className="center">
+      <div className="notes-par">
+        <div className="add-new-title">
+          <span style={{ alignSelf: "center" }}>Add new title?</span>
+          <div className="add" onClick={() => navigate("/new-title")}>
+            <FaPlusCircle className="addIcon" />
           </div>
-        ))
-      )}
+          <span className="old-titles"> Old titles :</span>
+        </div>
+
+        <div className="notes">
+          {loading ? (
+            <>
+              <div className="note">
+                <span className="title-name">Loading...</span>
+
+                <span className="title-time">
+                  <i>Loading...</i>
+                </span>
+              </div>
+              <div className="note">
+                <span className="title-name">Loading...</span>
+
+                <span className="title-time">
+                  <i>Loading...</i>
+                </span>
+              </div>
+            </>
+          ) : (
+            <>
+              {titles?.map((title, index) => (
+                <div
+                  className="note"
+                  key={titles[titles.length - index - 1].title}
+                  onClick={() =>
+                    gotoTitlePage(
+                      titles[titles.length - index - 1].title,
+                      titles[titles.length - index - 1].timestamp
+                    )
+                  }
+                >
+                  <span className="title-name">
+                    {titles[titles.length - index - 1].title}
+                  </span>
+                  <span className="title-time">
+                    <i>{titles[titles.length - index - 1].timestamp}</i>
+                  </span>
+                </div>
+              ))}
+            </>
+          )}
+          {titles && titles.length === 0 ? (
+            <div align="center" style={{ margin: "20px" }}>
+              No titles to show
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
+      </div>
     </div>
   );
 }

@@ -4,10 +4,6 @@
   transition: 1s linear;
 }
 
-/* *{
-  transition: 0.2s linear;
-} */
-
 body::-webkit-scrollbar {
   display: none;
 }
@@ -42,6 +38,22 @@ code {
   margin: 100px;
 }
 
+.title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  font-size: 50px;
+  font-weight: bold;
+  gap: 5px;
+}
+
+.title-name-edit {
+  display: inline-block;
+  overflow: hidden;
+  line-height: 50px;
+  text-overflow: ellipsis;
+}
+
 .title-name {
   padding: 5px;
   color: var(--main-color);
@@ -50,6 +62,11 @@ code {
   position: absolute;
   top: 0;
   left: 0;
+  width: 190px;
+  height: 55px;
+  overflow: hidden;
+  line-height: 20px;
+  text-overflow: ellipsis;
 }
 
 .title-time {
@@ -57,6 +74,7 @@ code {
   color: var(--main-color);
   font-size: 12px;
   position: absolute;
+  font-weight: bold;
   bottom: 0;
   right: 0;
 }
@@ -106,6 +124,7 @@ code {
 }
 
 .home {
+  position: relative;
   color: var(--opp-color);
   margin-top: 20px;
   margin-bottom: 100px;
@@ -126,6 +145,21 @@ code {
 .editIcon {
   color: var(--opp-color);
   cursor: pointer;
+  border-radius: 5px;
+}
+
+.editIcon {
+  background-color: var(--opp-color);
+  color: var(--main-color);
+  margin-left: auto;
+  padding: 5px;
+  font-size: 20px;
+  margin: 5px 5px 0 5px;
+}
+
+.editIcon:hover {
+  background-color: var(--main-color);
+  color: var(--opp-color);
 }
 
 .title-input {
@@ -136,24 +170,69 @@ code {
   max-width: 90%;
 }
 
+.new {
+  margin-top: 100px;
+}
+
 .title-input:focus {
   background-color: var(--opp-color);
   color: var(--main-color);
   outline: none;
 }
 
-.notes {
-  margin: auto;
-  max-width: 1000px;
+.center {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
+}
+
+.notes-par {
+  width: 75vw;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.add-new-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-new-title :nth-child(1) {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.add-new-title :nth-child(3) {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+/* .notes-center{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+} */
+
+.notes {
+  /* display: flex; */
+  justify-content: center;
+  /* flex-wrap: wrap; */
+  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 200px);
+  gap: 15px;
+  margin: 10px;
 }
 
 .note {
   position: relative;
   background-color: var(--opp-color);
-  margin: 10px;
+  /* margin: 10px; */
   border-radius: 7px;
   cursor: pointer;
 }
@@ -174,6 +253,7 @@ code {
   display: flex;
   justify-content: center;
   align-items: center;
+  align-self: center;
 }
 
 .add:hover {
@@ -239,9 +319,18 @@ code {
   outline: none;
 }
 
-.title-exists {
-  color: red;
-  margin: 10px;
+.error {
+  /* position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translate(-50%,0); */
+  display: inline-block;
+  margin: 10px 0;
+  font-size: 20px;
+  background-color: red;
+  color: var(--opp-color);
+  padding: 5px;
+  z-index: 200;
 }
 
 
@@ -272,7 +361,7 @@ code {
 
 .account {
   position: absolute;
-  top: 30px;
+  top: 20px;
   right: 50px;
   z-index: 100;
 }
@@ -471,7 +560,7 @@ code {
 
 .back {
   position: absolute;
-  top: 30px;
+  top: 25px;
   left: 50px;
   color: var(--opp-color);
   background-color: var(--main-color);
@@ -556,11 +645,6 @@ code {
     border-radius: 10px;
   }
 
-  .title {
-    font-size: 50px;
-    font-weight: bold;
-  }
-
   .homeIcon,
   .addIcon {
     font-size: 40px;
@@ -583,10 +667,6 @@ code {
   .edit-title {
     font-size: 25px;
     font-weight: bold;
-  }
-
-  .editIcon {
-    font-size: 25px;
   }
 
   .createdTime {
@@ -615,6 +695,10 @@ code {
     width: 700px;
     max-width: 80%;
   }
+
+  .old-titles{
+    align-self: center;
+  }
 }
 
 /* Styles for mobile devices */
@@ -623,18 +707,36 @@ code {
     font-size: 40px;
   }
 
+  .notes-par {
+    width: 100vw;
+  }
+
+  .add-new-title {
+    margin: 0 10px 0 10px;
+  }
+
+  .notes {
+    justify-content: space-evenly;
+    /* flex-wrap: wrap; */
+    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 170px);
+    gap: 15px;
+    /* margin: 10px; */
+  }
+
   .note {
-    height: 75px;
-    width: 150px;
+    height: 100px;
+    width: 170px;
   }
 
   .add {
-    height: 75px;
-    width: 150px;
+    height: 50px;
+    width: 90vw;
   }
 
   .note:hover {
-    height: 72px;
+    height: 97px;
     background-color: var(--main-color);
     border-bottom: 3px solid var(--opp-color);
   }
@@ -645,7 +747,7 @@ code {
   }
 
   .button {
-    font-size: 15px;
+    font-size: 20px;
   }
 
   .title-input {
@@ -695,12 +797,12 @@ code {
     font-weight: bold;
   }
 
-  .editIcon {
-    font-size: 18px;
-  }
+  /* .editIcon {
+    font-size: 15px;
+  } */
 
   .createdTime {
-    font-size: 10px;
+    font-size: 12px;
   }
 
   .title-page-note {
@@ -725,20 +827,17 @@ code {
   }
 
   .title-name {
-    font-size: 15px;
+    font-size: 20px;
+    width: 150px;
   }
 
   .title-time {
-    font-size: 8px;
-  }
-
-  .title-exists {
     font-size: 10px;
   }
 
   .header {
-    margin-top: 50px;
-    margin-bottom: 30px;
+    /* margin-top: 50px; */
+    margin-bottom: 50px;
   }
 
   .header-letter {
@@ -751,16 +850,16 @@ code {
   }
 
   .back {
-    top: 20px;
-    left: 20px;
+    top: 10px;
+    left: 10px;
     height: 40px;
     width: 40px;
     font-size: 40px;
   }
 
   .account {
-    top: 20px;
-    right: 20px;
+    top: 10px;
+    right: 10px;
   }
 
   .user-image {
@@ -773,53 +872,6 @@ code {
     height: 38px;
     width: 38px;
     padding: 0;
-  }
-
-  .top-container {
-    width: 250px;
-    height: 65px;
-  }
-
-  .user-image-popup {
-    height: 65px;
-    width: 65px;
-  }
-
-  .bottom-container {
-    width: 250px;
-    padding-bottom: 20px;
-    background-color: var(--main-color);
-    border-radius: 0 0 10px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .user-name {
-    margin-top: 35px;
-    font-size: 20px;
-  }
-
-  .user-email {
-    font-size: 12px;
-  }
-
-  .num-notes {
-    margin-top: 10px;
-  }
-
-  .num-notes div {
-    font-size: 15px;
-    font-weight: bold;
-    color: var(--opp-color);
-  }
-
-  .num-notes :nth-child(2) {
-    font-size: 40px;
-  }
-
-  .delete-all {
-    font-size: 15px;
   }
 
   .google {
@@ -835,5 +887,11 @@ code {
   .goto-home {
     font-size: 17px;
     gap: 5px;
+  }
+}
+
+@media (max-width: 380px) {
+  .note {
+    width: 160px;
   }
 }

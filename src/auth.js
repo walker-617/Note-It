@@ -32,9 +32,9 @@ function addNote(email, title, note, timestamp) {
   );
 }
 
-function deleteNote(username, title, note, timestamp) {
+function deleteNote(email, title, note, timestamp) {
   setDoc(
-    doc(db, username, title),
+    doc(db, email, title),
     {
       notes: arrayRemove({ note, timestamp }),
     },
@@ -65,10 +65,10 @@ function addTitle(email, title, timestamp, data = {notes:[]}) {
   );
 }
 
-function deleteTitle(username, title, timestamp) {
-  deleteDoc(doc(db, username, title));
+function deleteTitle(email, title, timestamp) {
+  deleteDoc(doc(db, email, title));
   setDoc(
-    doc(db, username, "all_titles"),
+    doc(db, email, "all_titles"),
     {
       titles: arrayRemove({ title, timestamp }),
     },
@@ -81,6 +81,14 @@ function updateTitle(email, oldTitle, newTitle, oldTimestamp, newTimestamp) {
     deleteTitle(email, oldTitle, oldTimestamp);
     addTitle(email, newTitle, newTimestamp, data.data());
   });
+}
+
+async function deleteAllTitles(email){
+    const data = await getTitles(email);
+    for (let title of data.titles) {
+      deleteTitle(email,title["title"],title["timestamp"]);
+    }
+    return "deleted";
 }
 
 async function checkPageAndTitle(email, title_, updatedTitle_) {
@@ -110,4 +118,5 @@ export {
   updateTitle,
   onSnapshot,
   checkPageAndTitle,
+  deleteAllTitles
 };

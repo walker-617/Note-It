@@ -15,6 +15,7 @@ import {
   doc,
   db,
   checkPageAndTitle,
+  deleteTitle,
 } from "../auth";
 
 function TitlePage() {
@@ -31,14 +32,14 @@ function TitlePage() {
   const [error, setError] = useState("");
 
   const [email, setEmail] = useState("");
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState();
   const [title, setTitle] = useState("");
   const [t_timestamp, setT_timestamp] = useState("");
 
   useEffect(() => {
-    if (location.state?.title && location.state?.timestamp) {
+    if (location.state?.title && location.state?.time) {
       setTitle(location.state?.title);
-      setT_timestamp(location.state?.timestamp);
+      setT_timestamp(location.state?.time);
     } else {
       navigate("/", { replace: true });
     }
@@ -51,7 +52,7 @@ function TitlePage() {
         setEmail(user.email);
         if (title) {
           unsubscribe = onSnapshot(doc(db, user.email, title), (doc) => {
-            setNotes(doc.data()?.notes);
+            setNotes(doc.data()?.notes ?? []);
             setLoading(false);
             setEditNotes(new Array(doc.data()?.notes.length).fill(false));
           });
@@ -71,11 +72,11 @@ function TitlePage() {
 
   function validateDocumentName(name) {
     if (!name.trim()) {
-      return "title cannot be empty.";
+      return "title cannot be empty";
     }
 
     if (/^[0-9]/.test(name)) {
-      return "title cannot start with a number.";
+      return "title cannot start with a number";
     }
 
     if (!/^[a-zA-Z_$][a-zA-Z0-9 _$]*$/.test(name)) {
@@ -85,7 +86,7 @@ function TitlePage() {
     if (name.length >= 1000) {
       return "title must be less than 1,000 characters";
     }
-    return "title is valid.";
+    return "title is valid";
   }
 
   async function handleUpdateTitle() {
@@ -93,23 +94,35 @@ function TitlePage() {
     newTitle = newTitle.trim().replace(/\s+/g, " ");
 
     const x = validateDocumentName(newTitle);
-    if (x !== "title is valid.") {
+    if (x !== "title is valid") {
       setError(x);
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
 
     const [page, titleExists] = await checkPageAndTitle(email, title, newTitle);
 
     if (!page) {
-      setError("no page");
+      setError("Page not found");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
     if (newTitle === title) {
-      setError("same title");
+      setError("Same title");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
     if (titleExists) {
-      setError("title already exists");
+      setError("Title already exists");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
     const time = getTimestamp();
@@ -130,13 +143,24 @@ function TitlePage() {
     setError("");
   }
 
-  function createNote() {
+  async function createNote() {
+    const [page, titleExists] = await checkPageAndTitle(email, title, "");
+    if (!page) {
+      setError("Page not found");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return;
+    }
     var note = newNoteRef.current.value;
     console.log(note);
     note = note.trim().replace(/[ \t]+/g, " ");
     console.log(note);
     if (note === "") {
       setError("note cannot be empty");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
 
@@ -150,6 +174,9 @@ function TitlePage() {
 
     if (noteExists) {
       setError("note already exists");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
 
@@ -159,16 +186,30 @@ function TitlePage() {
     newNoteRef.current.value = "";
   }
 
-  function handleUpdateNote(oldNote, oldTimestamp) {
+  async function handleUpdateNote(oldNote, oldTimestamp) {
+    const [page, titleExists] = await checkPageAndTitle(email, title, "");
+    if (!page) {
+      setError("Page not found");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return;
+    }
     var newNote = updateNoteRef.current.value;
     newNote = newNote.trim().replace(/[ \t]+/g, " ");
     if (newNote === "") {
       setError("note cannot be empty");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
 
     if (oldNote === newNote) {
       setError("same note");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
 
@@ -182,6 +223,9 @@ function TitlePage() {
 
     if (noteExists) {
       setError("note already exists");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
 
@@ -191,8 +235,29 @@ function TitlePage() {
     updateNoteRef.current.value = "";
   }
 
-  function _deleteNote(note, timestamp) {
+  async function _deleteNote(note, timestamp) {
+    const [page, titleExists] = await checkPageAndTitle(email, title, "");
+    if (!page) {
+      setError("Page not found");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return;
+    }
     deleteNote(email, title, note, timestamp);
+  }
+
+  async function _deleteTitle() {
+    const [page, titleExists] = await checkPageAndTitle(email, title, "");
+    if (!page) {
+      setError("Page not found");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return;
+    }
+    deleteTitle(email, title, t_timestamp);
+    navigate("/home", { replace: true });
   }
 
   function toggleEditNote(index) {
@@ -212,13 +277,7 @@ function TitlePage() {
     <>
       <Back />
       <div className="title-page">
-        {error ? (
-          <span className="title-exists" align="center">
-            {error}
-          </span>
-        ) : (
-          ""
-        )}
+        {error ? <div className="error">{error}</div> : ""}
         {editTitle ? (
           <div>
             <textarea
@@ -248,13 +307,18 @@ function TitlePage() {
             />
           </div>
         ) : (
-          <div className="title">
-            {title}{" "}
-            <FaPen className="editIcon" onClick={() => setEditTitle(true)} />
-            <span className="createdTime">
-              <i>{t_timestamp}</i>
-            </span>
-          </div>
+          <>
+            <div className="title">
+              <div className="title-name-edit">{title}</div>
+              <span className="createdTime">
+                <i>{t_timestamp}</i>
+              </span>
+            </div>
+            <div>
+              <FaPen className="editIcon" onClick={() => setEditTitle(true)} />
+              <FaTrash className="editIcon" onClick={() => _deleteTitle()} />
+            </div>
+          </>
         )}
         <br></br>
         <textarea
@@ -347,7 +411,7 @@ function TitlePage() {
           ))
         )}
       </div>
-      {notes.length === 0 ? (
+      {notes && notes.length === 0 ? (
         <div align="center" style={{ margin: "20px" }}>
           No old notes
         </div>
