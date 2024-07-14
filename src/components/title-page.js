@@ -153,9 +153,7 @@ function TitlePage() {
       return;
     }
     var note = newNoteRef.current.value;
-    console.log(note);
     note = note.trim().replace(/[ \t]+/g, " ");
-    console.log(note);
     if (note === "") {
       setError("note cannot be empty");
       setTimeout(() => {
