@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { FaPlusCircle } from "react-icons/fa";
 import Header from "./header";
+import TitleLoading from "./TitleLoading";
 
 function Home() {
   const navigate = useNavigate();
@@ -53,22 +54,26 @@ function Home() {
         <div className="notes">
           {loading ? (
             <>
-              <div className="note">
-                <span className="title-name">Loading...</span>
-
-                <span className="title-time">
-                  <i>Loading...</i>
-                </span>
-              </div>
-              <div className="note">
-                <span className="title-name">Loading...</span>
-
-                <span className="title-time">
-                  <i>Loading...</i>
-                </span>
-              </div>
+              <TitleLoading />
+              <TitleLoading />
             </>
           ) : (
+            // <>
+            //   <div className="note">
+            //     <span className="title-name">Loading...</span>
+
+            //     <span className="title-time">
+            //       <i>Loading...</i>
+            //     </span>
+            //   </div>
+            //   <div className="note">
+            //     <span className="title-name">Loading...</span>
+
+            //     <span className="title-time">
+            //       <i>Loading...</i>
+            //     </span>
+            //   </div>
+            // </>
             <>
               {titles?.map((title, index) => (
                 <div

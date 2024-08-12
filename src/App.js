@@ -1,4 +1,5 @@
 import "./App.css";
+import "./New.css"
 import Login from "./components/login";
 import Home from "./components/home";
 import NewTitle from "./components/new-title";

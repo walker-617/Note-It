@@ -3,6 +3,7 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import google from "../google_black.png";
 import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import Loading from "./Loading";
 
 function Login() {
   const navigate = useNavigate();
@@ -30,14 +31,14 @@ function Login() {
         navigate("/home", { replace: true });
       })
       .catch((error) => {
-        setError("error : "+error.code);
+        setError("error : " + error.code);
       });
   }
 
   return (
     <div className="login">
       {load ? (
-        "Loading..."
+        <Loading />
       ) : (
         <>
           Sign in with

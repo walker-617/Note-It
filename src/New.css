@@ -1,0 +1,72 @@
+.load-parent {
+    width: fit-content;
+    background-color: var(--main-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.loading {
+    color: var(--opp-color);
+    font-family: verdana;
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.circle {
+    height: 50px;
+    width: 50px;
+    background-color: var(--opp-color);
+    border-radius: 50px;
+}
+
+@keyframes animate {
+    0% {
+        opacity: 0;
+        transform: scale(0.75);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.animate {
+    opacity: 0;
+    transform: scale(1);
+    animation: animate 1s ease-in-out alternate infinite;
+}
+
+.delay-1 {
+    animation-delay: 0s;
+}
+
+.delay-2 {
+    animation-delay: 0.25s;
+}
+
+.delay-3 {
+    animation-delay: 0.5s;
+}
+
+.card-shine {
+    position: absolute;
+    top: 50%;
+    left: -100%;
+    width: 20%;
+    height: 150%;
+    /* background: linear-gradient(to right, transparent ,var(--opp-color), transparent); */
+    background-color: var(--opp-color);
+    opacity: 0.5;
+    transform: rotate(30deg) translate(-50%,-50%);
+    animation: shiny 3s ease-in-out infinite;
+    z-index: 100;
+}
+
+@keyframes shiny {
+    to {
+        left: 100%;
+    }
+}

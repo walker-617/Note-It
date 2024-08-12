@@ -235,6 +235,7 @@ code {
   /* margin: 10px; */
   border-radius: 7px;
   cursor: pointer;
+  overflow: hidden;
 }
 
 .note:hover .title-time {
@@ -545,6 +546,7 @@ code {
   justify-content: center;
   align-items: center;
   margin-bottom: 50px;
+  position: relative;
 }
 
 .header-letter {
