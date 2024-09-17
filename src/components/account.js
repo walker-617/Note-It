@@ -76,6 +76,7 @@ function Account({ mode, setMode }) {
           <div className="account">
             <img
               src={imageURL}
+              alt="User profile image"
               className="user-image"
               onClick={() => setOpenPopup(true)}
             />
@@ -88,7 +89,11 @@ function Account({ mode, setMode }) {
               ></div>
               <div className="account-popup">
                 <div className="top-container">
-                  <img src={imageURL} className="user-image-popup" />
+                  <img
+                    src={imageURL}
+                    alt="User profile image"
+                    className="user-image-popup"
+                  />
                   <MdOutlineLogout
                     className="logout"
                     onClick={() => signOut()}

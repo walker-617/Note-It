@@ -26,6 +26,7 @@ function Header({ mode, setMode }) {
       {mode === "dark" ? (
         <img
           src={imageURL}
+          alt="App Logo"
           className="header-image"
           onClick={() => changeModeTo("light")}
           onMouseOver={() => setImageURL(logo_nbg_dark)}
@@ -34,6 +35,7 @@ function Header({ mode, setMode }) {
       ) : (
         <img
           src={imageURL}
+          alt="App Logo"
           className="header-image"
           onClick={() => changeModeTo("dark")}
           onMouseOver={() => setImageURL(logo_nbg_light)}
