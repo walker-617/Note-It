@@ -28,7 +28,8 @@ function Account({ mode, setMode }) {
     const authStateChanged = getAuth().onAuthStateChanged((user) => {
       if (user) {
         setShow(true);
-        setImageURL(user.photoURL.replace("s96-c", "s192-c"));
+        setImageURL(user.photoURL);
+        console.log(user.photoURL);
         setName(user.displayName);
         setEmail(user.email);
         unsubscribe = onSnapshot(doc(db, user.email, "all_titles"), (doc) => {
@@ -76,7 +77,7 @@ function Account({ mode, setMode }) {
           <div className="account">
             <img
               src={imageURL}
-              alt="User profile image"
+              alt="Go to profile"
               className="user-image"
               onClick={() => setOpenPopup(true)}
             />
@@ -91,7 +92,7 @@ function Account({ mode, setMode }) {
                 <div className="top-container">
                   <img
                     src={imageURL}
-                    alt="User profile image"
+                    alt="Profile"
                     className="user-image-popup"
                   />
                   <MdOutlineLogout

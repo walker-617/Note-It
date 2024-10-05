@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FaPen } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
+import { IoIosCopy } from "react-icons/io";
+import { FaCircleCheck } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import Back from "./back";
@@ -271,6 +273,10 @@ function TitlePage() {
     });
   }
 
+  const copyNote = (note) => {
+    navigator.clipboard.writeText(note);
+  };
+
   return (
     <>
       <Back />
@@ -394,14 +400,23 @@ function TitlePage() {
                   <div className="timestamp" align="end">
                     <i>{notes[notes.length - index - 1].timestamp}</i>
                   </div>
-                  <div
-                    className="title-page-note"
-                    style={{ textAlign: "start" }}
-                    onClick={() => toggleEditNote(notes.length - index - 1)}
-                  >
-                    <span className="note-text">
-                      {notes[notes.length - index - 1].note}
-                    </span>
+                  <div>
+                    <div
+                      className="title-page-note"
+                      style={{ textAlign: "start" }}
+                      onClick={() => toggleEditNote(notes.length - index - 1)}
+                    >
+                      <span className="note-text">
+                        {notes[notes.length - index - 1].note}
+                      </span>
+                    </div>
+
+                    <IoIosCopy
+                      className="copyNote"
+                      onClick={() =>
+                        copyNote(notes[notes.length - index - 1].note)
+                      }
+                    />
                   </div>
                 </>
               )}
